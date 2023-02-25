@@ -1,5 +1,6 @@
 package pro.sky.telegramcatdog.constants;
 
+import com.pengrad.telegrambot.model.CallbackQuery;
 import com.vdurmont.emoji.EmojiParser;
 
 public class Constants {
@@ -17,6 +18,12 @@ public class Constants {
     public final static String BUTTON_CALL_VOLUNTEER_TEXT = "Позвать волонтера";
 
     // Buttons callback text
+    /**
+     * Callback text linked to the STAGE1 button. Use this text when processing button clicks. <br>
+     * Example: <br>
+     * {@code if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) { Your code to process stage 1 }}
+     * @see CallbackQuery
+     */
     public final static String BUTTON_STAGE1_CALLBACK_TEXT = "button Stage1 clicked";
     public final static String BUTTON_STAGE2_CALLBACK_TEXT = "button Stage2 clicked";
     public final static String BUTTON_STAGE3_CALLBACK_TEXT = "button Stage3 clicked";
