@@ -25,3 +25,24 @@ CREATE TABLE IF NOT EXISTS adopters
     on_probation BOOL,
     active	BOOL
 );
+
+--changeset itamerlan:3
+CREATE TABLE IF NOT EXISTS volunteers
+(
+    id		SERIAL PRIMARY KEY,
+    name	VARCHAR,
+    telegram	VARCHAR,
+    picture	BYTEA
+);
+
+--changeset itamerlan:4
+CREATE TABLE IF NOT EXISTS adoption_reports
+(
+    adopter_id	BIGSERIAL PRIMARY KEY,
+    report_date TIMESTAMP,
+    pet_id	INT,
+    picture	BYTEA,
+    diet	VARCHAR,
+    wellbeing	VARCHAR,
+    behavior_change VARCHAR
+)
