@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS adopters
     phone1	VARCHAR,
     phone2	VARCHAR,
     email	VARCHAR,
-    telegram	VARCHAR, // telegram id
-    volunteer_id INT, // Lookup to [volunteers] table
+    telegram	VARCHAR, -- telegram id
+    volunteer_id INT, -- Lookup to [volunteers] table
     on_probation BOOL,
     active	BOOL
 );
