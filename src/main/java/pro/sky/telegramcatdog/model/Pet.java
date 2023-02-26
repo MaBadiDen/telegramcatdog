@@ -4,15 +4,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
-public class Volunteer {
+public class Pet {
 
     @Id
-    private int id;
+    private long id;
 
-    public Volunteer() {
+    public Pet() {
+
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 }

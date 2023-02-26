@@ -12,18 +12,32 @@ CREATE TABLE IF NOT EXISTS guests
 --changeset truemabadi:2
 CREATE TABLE IF NOT EXISTS adopters
 (
-    id		BIGSERIAL PRIMARY KEY,
-    first_name	VARCHAR,
-    last_name	VARCHAR,
-    passport	VARCHAR,
-    age		INT,
-    phone1	VARCHAR,
-    phone2	VARCHAR,
-    email	VARCHAR,
-    telegram	VARCHAR, // telegram id
-    volunteer_id INT, // Lookup to [volunteers] table
-    on_probation BOOL,
-    active	BOOL
+    id
+    BIGSERIAL
+    PRIMARY
+    KEY,
+    first_name
+    VARCHAR,
+    last_name
+    VARCHAR,
+    passport
+    VARCHAR,
+    age
+    INT,
+    phone1
+    VARCHAR,
+    phone2
+    VARCHAR,
+    email
+    VARCHAR,
+    telegram
+    VARCHAR, -- telegram id
+    volunteer_id
+    INT,     -- Lookup to [volunteers] table
+    on_probation
+    BOOL,
+    active
+    BOOL
 );
 
 --changeset itamerlan:3
@@ -38,11 +52,49 @@ CREATE TABLE IF NOT EXISTS volunteers
 --changeset itamerlan:4
 CREATE TABLE IF NOT EXISTS adoption_reports
 (
-    adopter_id	BIGSERIAL PRIMARY KEY,
-    report_date TIMESTAMP,
-    pet_id	INT,
-    picture	BYTEA,
-    diet	VARCHAR,
-    wellbeing	VARCHAR,
-    behavior_change VARCHAR
+    adopter_id
+    BIGSERIAL
+    PRIMARY
+    KEY,
+    report_date
+    TIMESTAMP,
+    pet_id
+    INT,
+    picture
+    BYTEA,
+    diet
+    VARCHAR,
+    wellbeing
+    VARCHAR,
+    behavior_change
+    VARCHAR
 )
+
+-- changeset alexeym75:1
+CREATE TABLE IF NOT EXISTS branch_params
+(
+    id
+    INT
+    PRIMARY
+    KEY,
+    name
+    VARCHAR,
+    country
+    VARCHAR,
+    city
+    VARCHAR,
+    zip
+    VARCHAR,
+    address
+    VARCHAR,
+    work_hours
+    VARCHAR,
+    map
+    BYTEA, -- directions how to get there
+    info
+    TEXT,  -- other information
+    prob_period
+    INT,   -- probation period (in days)
+    prob_extend
+    INT    -- probation extension period (in days)
+);

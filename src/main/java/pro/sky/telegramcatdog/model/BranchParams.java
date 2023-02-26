@@ -8,10 +8,10 @@ import jakarta.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class ShelterParams {
+public class BranchParams {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int branch;
+    private int id;
     private String name;
     private String country;
     private String city;
@@ -23,17 +23,17 @@ public class ShelterParams {
     private int probPeriod;
     private int probExtend;
 
-    public ShelterParams(int branch, String name) {
-        this.branch = branch;
+    public BranchParams(int branch, String name) {
+        this.id = branch;
         this.name = name;
     }
 
-    public ShelterParams() {
+    public BranchParams() {
 
     }
 
-    public int getBranch() {
-        return branch;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -80,12 +80,13 @@ public class ShelterParams {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ShelterParams that = (ShelterParams) o;
-        return branch == that.branch;
+        BranchParams that = (BranchParams) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(branch);
+        return Objects.hash(id);
     }
+
 }
