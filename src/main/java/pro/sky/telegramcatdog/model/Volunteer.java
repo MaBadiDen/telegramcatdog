@@ -18,6 +18,13 @@ public class Volunteer {
     public Volunteer() {
     }
 
+    public Volunteer(long id, String name, String telegram, byte[] picture) {
+        this.id = id;
+        this.name = name;
+        this.telegram = telegram;
+        this.picture = picture;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

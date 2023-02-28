@@ -12,6 +12,7 @@ import java.util.Objects;
 public class AdoptionReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long adopterId;
     private LocalDateTime reportDate;
     private Integer petId;
@@ -34,6 +35,14 @@ public class AdoptionReport {
     @Override
     public int hashCode() {
         return Objects.hash(adopterId);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getAdopterId() {
