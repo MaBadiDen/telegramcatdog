@@ -6,20 +6,20 @@ import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 
 @Service
 public class BranchParamsService {
-    private final BranchParamsRepository shelterParamsRepository;
+    private final BranchParamsRepository branchParamsRepository;
 
     public BranchParamsService(BranchParamsRepository shelterParamsRepository) {
-        this.shelterParamsRepository = shelterParamsRepository;
+        this.branchParamsRepository = shelterParamsRepository;
     }
 
     public BranchParams createBranch(BranchParams branchParams) {
-        return shelterParamsRepository.save(branchParams);
+        return branchParamsRepository.save(branchParams);
     }
 
     public BranchParams editBranch(BranchParams branchParams) {
-        if (shelterParamsRepository.findById(branchParams.getId()).orElse(null) == null) {
+        if (branchParamsRepository.findById(branchParams.getId()).orElse(null) == null) {
             return null;
         }
-        return shelterParamsRepository.save(branchParams);
+        return branchParamsRepository.save(branchParams);
     }
 }

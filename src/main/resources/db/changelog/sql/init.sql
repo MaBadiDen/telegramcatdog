@@ -3,10 +3,16 @@
 --changeset truemabadi:1
 CREATE TABLE IF NOT EXISTS guests
 (
-    id		BIGSERIAL PRIMARY KEY,
-    telegram_id	VARCHAR,
-    last_visit 	TIMESTAMP,
-    last_menu	INT
+    id
+    BIGSERIAL
+    PRIMARY
+    KEY,
+    telegram_id
+    VARCHAR,
+    last_visit
+    TIMESTAMP,
+    last_menu
+    INT
 );
 
 --changeset truemabadi:2
@@ -98,3 +104,30 @@ CREATE TABLE IF NOT EXISTS branch_params
     prob_extend
     INT    -- probation extension period (in days)
 );
+
+-- changeset alexeym75:2
+CREATE TABLE IF NOT EXISTS pets
+(
+    id
+    BIGSERIAL
+    PRIMARY
+    KEY,
+    nick_name
+    VARCHAR,
+    pet_type
+    INT, -- enum PetType
+    --breed_id	INT, -- lookup to [breeds] table
+    color
+    INT, -- enum Color
+    sex
+    INT  -- enum Sex
+    --picture     BYTEA,
+    --adopter_id  INT  -- lookup to [adopters] table
+)
+
+-- changeset alexeym75:3
+ALTER TABLE volunteers DROP COLUMN telegram;
+ALTER TABLE volunteers
+    ADD COLUMN telegram_chat_id BIGINT;
+ALTER TABLE volunteers
+    ADD COLUMN telegram_username VARCHAR;
