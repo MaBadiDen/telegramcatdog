@@ -12,10 +12,10 @@ import pro.sky.telegramcatdog.service.BranchParamsService;
 @RestController
 @RequestMapping("pet-shelter/params")
 public class BranchParamsController {
-    private final BranchParamsService shelterParamsService;
+    private final BranchParamsService branchParamsService;
 
-    public BranchParamsController(BranchParamsService shelterParamsService) {
-        this.shelterParamsService = shelterParamsService;
+    public BranchParamsController(BranchParamsService branchParamsService) {
+        this.branchParamsService = branchParamsService;
     }
 
     @Operation(
@@ -41,7 +41,7 @@ public class BranchParamsController {
     )
     @PostMapping
     public BranchParams createBranch(@RequestBody BranchParams branchParams) {
-        return shelterParamsService.createBranch(branchParams);
+        return branchParamsService.createBranch(branchParams);
     }
 
     @Operation(
@@ -67,6 +67,6 @@ public class BranchParamsController {
     )
     @PutMapping
     public BranchParams editBranch(@RequestBody BranchParams branchParams) {
-        return shelterParamsService.editBranch(branchParams);
+        return branchParamsService.editBranch(branchParams);
     }
 }

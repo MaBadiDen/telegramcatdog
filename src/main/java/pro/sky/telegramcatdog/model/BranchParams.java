@@ -23,8 +23,8 @@ public class BranchParams {
     private int probPeriod;
     private int probExtend;
 
-    public BranchParams(int branch, String name) {
-        this.id = branch;
+    public BranchParams(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
