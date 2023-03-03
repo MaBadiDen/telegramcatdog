@@ -1,6 +1,7 @@
 package pro.sky.telegramcatdog.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,25 @@ public class BranchParamsController {
 
     public BranchParamsController(BranchParamsService branchParamsService) {
         this.branchParamsService = branchParamsService;
+    }
+
+    @Operation(
+            summary = "Поиск бранча по id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Найден бранч с параметрами",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = BranchParams.class)
+                            )
+                    )
+            },
+            tags = "Работа с бранчами"
+    )
+    @GetMapping("{id}")
+    public BranchParams getBranchById(@Parameter(description = "id бранча", example = "1") @PathVariable Integer id) {
+        return branchParamsService.getBranchById(id);
     }
 
     @Operation(

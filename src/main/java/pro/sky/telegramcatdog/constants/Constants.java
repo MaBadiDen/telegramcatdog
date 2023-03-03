@@ -31,4 +31,9 @@ public class Constants {
     public final static String BUTTON_STAGE2_CALLBACK_TEXT = "button Stage2 clicked";
     public final static String BUTTON_STAGE3_CALLBACK_TEXT = "button Stage3 clicked";
     public final static String BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT = "button CallVolunteer clicked";
+
+    // For testing
+    public final static String LOCALHOST_URL = "http://localhost:";
+    public final static String BRANCHPARAMS_URL = "/pet-shelter/params";
+
 }
