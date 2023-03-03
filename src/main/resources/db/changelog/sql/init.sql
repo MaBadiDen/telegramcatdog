@@ -49,10 +49,16 @@ CREATE TABLE IF NOT EXISTS adopters
 --changeset itamerlan:3
 CREATE TABLE IF NOT EXISTS volunteers
 (
-    id		SERIAL PRIMARY KEY,
-    name	VARCHAR,
-    telegram	VARCHAR,
-    picture	BYTEA
+    id
+    SERIAL
+    PRIMARY
+    KEY,
+    name
+    VARCHAR,
+    telegram
+    VARCHAR,
+    picture
+    BYTEA
 );
 
 --changeset itamerlan:4
