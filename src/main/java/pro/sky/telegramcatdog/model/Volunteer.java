@@ -48,6 +48,14 @@ public class Volunteer {
         return picture;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTelegramChatId(long telegramChatId) {
+        this.telegramChatId = telegramChatId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

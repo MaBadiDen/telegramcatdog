@@ -35,5 +35,7 @@ public class Constants {
     // For testing
     public final static String LOCALHOST_URL = "http://localhost:";
     public final static String BRANCHPARAMS_URL = "/pet-shelter/params";
+    public final static String PET_URL = "/pet-shelter/pet";
+    public final static String VOLUNTEER_URL = "/pet-shelter/volunteer";
 
 }

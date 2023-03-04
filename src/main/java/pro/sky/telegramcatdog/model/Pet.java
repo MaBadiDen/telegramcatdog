@@ -50,6 +50,14 @@ public class Pet {
         return sex;
     }
 
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
