@@ -12,28 +12,45 @@ public class Adopter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String passport;
     private int age;
     private String phone1;
     private String phone2;
     private String telegram;
-    private int volunteer_id;
-    private boolean on_probation;
+    private int volunteerId;
+    private boolean onProbation;
     private boolean active;
+
+    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId, boolean onProbation, boolean active) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.passport = passport;
+        this.age = age;
+        this.phone1 = phone1;
+        this.phone2 = phone2;
+        this.telegram = telegram;
+        this.volunteerId = volunteerId;
+        this.onProbation = onProbation;
+        this.active = active;
+    }
+
+    public Adopter() {
+
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Adopter)) return false;
         Adopter adopter = (Adopter) o;
-        return getAge() == adopter.getAge() && getVolunteer_id() == adopter.getVolunteer_id() && isOn_probation() == adopter.isOn_probation() && isActive() == adopter.isActive() && Objects.equals(getId(), adopter.getId()) && Objects.equals(getFirst_name(), adopter.getFirst_name()) && Objects.equals(getLast_name(), adopter.getLast_name()) && Objects.equals(getPassport(), adopter.getPassport()) && Objects.equals(getPhone1(), adopter.getPhone1()) && Objects.equals(getPhone2(), adopter.getPhone2()) && Objects.equals(getTelegram(), adopter.getTelegram());
+        return getId().equals(adopter.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getFirst_name(), getLast_name(), getPassport(), getAge(), getPhone1(), getPhone2(), getTelegram(), getVolunteer_id(), isOn_probation(), isActive());
+        return Objects.hash(getId());
     }
 
     public Long getId() {
@@ -44,20 +61,20 @@ public class Adopter {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getPassport() {
@@ -100,20 +117,20 @@ public class Adopter {
         this.telegram = telegram;
     }
 
-    public int getVolunteer_id() {
-        return volunteer_id;
+    public int getVolunteerId() {
+        return volunteerId;
     }
 
-    public void setVolunteer_id(int volunteer_id) {
-        this.volunteer_id = volunteer_id;
+    public void setVolunteerId(int volunteerId) {
+        this.volunteerId = volunteerId;
     }
 
-    public boolean isOn_probation() {
-        return on_probation;
+    public boolean isOnProbation() {
+        return onProbation;
     }
 
-    public void setOn_probation(boolean on_probation) {
-        this.on_probation = on_probation;
+    public void setOnProbation(boolean onProbation) {
+        this.onProbation = onProbation;
     }
 
     public boolean isActive() {
