@@ -30,7 +30,8 @@ public class VolunteerService {
         logger.debug("Calling method update Volunteer (Id = {})", volunteer.getId());
         Volunteer oldVolunteer = read(id);
         oldVolunteer.setName(volunteer.getName());
-        oldVolunteer.setTelegram(volunteer.getTelegram());
+        oldVolunteer.setChatId(volunteer.getChatId());
+        oldVolunteer.setUsername(volunteer.getUsername());
         oldVolunteer.setPicture(volunteer.getPicture());
         return volunteerRepository.save(oldVolunteer);
     }

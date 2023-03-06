@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS volunteers
 (
     id          SERIAL PRIMARY KEY,
     name        VARCHAR,
-    telegram    VARCHAR,
+    chat_id     BIGINT,
+    username    VARCHAR,
     picture     BYTEA
 );
 
@@ -77,7 +78,3 @@ CREATE TABLE IF NOT EXISTS pets
     --adopter_id  INT  -- lookup to [adopters] table
 )
 
--- changeset alexeym75:3
-ALTER TABLE volunteers DROP COLUMN telegram;
-ALTER TABLE volunteers ADD COLUMN telegram_chat_id BIGINT;
-ALTER TABLE volunteers ADD COLUMN telegram_username VARCHAR;

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-import static pro.sky.telegramcatdog.constants.Constants.VOLUNTEER_CHAT_ID;
 
 @Entity
 @Table(name = "volunteers")
@@ -13,16 +12,18 @@ public class Volunteer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column(name = "telegram")
-    private String telegram;
+    @Column(name = "chat_id")
+    private Integer chatId;
+    private String username;
     private byte[] picture;
     public Volunteer() {
     }
 
-    public Volunteer(long id, String name, String telegram, byte[] picture) {
+    public Volunteer(Long id, String name, Integer chatId, String username, byte[] picture) {
         this.id = id;
         this.name = name;
-        this.telegram = telegram;
+        this.chatId = chatId;
+        this.username = username;
         this.picture = picture;
     }
 
@@ -55,12 +56,24 @@ public class Volunteer {
         this.name = name;
     }
 
-    public String getTelegram() {
-        return telegram;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setTelegram(String telegram) {
-        this.telegram = telegram;
+    public Integer getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Integer chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public byte[] getPicture() {
@@ -71,7 +84,4 @@ public class Volunteer {
         this.picture = picture;
     }
 
-    public long getTelegramChatId() {
-        return VOLUNTEER_CHAT_ID;
-    }
 }

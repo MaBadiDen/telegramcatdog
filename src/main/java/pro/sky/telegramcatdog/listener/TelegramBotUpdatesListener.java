@@ -139,7 +139,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             sendMessage(message);
         } else {
             // Volunteer chat_id. Send message to volunteer.
-            chatId = volunteer.getTelegramChatId();
+            chatId = volunteer.getChatId();
             if (update.callbackQuery().from().username() != null) {
                 userId = "@" + update.callbackQuery().from().username();
                 SendMessage message = new SendMessage(chatId, String.format(CONTACT_TELEGRAM_USERNAME_TEXT, userId));

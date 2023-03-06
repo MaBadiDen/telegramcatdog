@@ -38,6 +38,4 @@ public class Constants {
     public final static String PET_URL = "/pet-shelter/pet";
     public final static String VOLUNTEER_URL = "/pet-shelter/volunteer";
 
-    public final static Long VOLUNTEER_CHAT_ID = 2028805139L;
-
 }
