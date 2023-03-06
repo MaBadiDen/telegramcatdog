@@ -1,18 +1,19 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
+import static pro.sky.telegramcatdog.constants.Constants.VOLUNTEER_CHAT_ID;
+
 @Entity
+@Table(name = "volunteers")
 public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
+    @Column(name = "telegram")
     private String telegram;
     private byte[] picture;
     public Volunteer() {
@@ -68,5 +69,9 @@ public class Volunteer {
 
     public void setPicture(byte[] picture) {
         this.picture = picture;
+    }
+
+    public long getTelegramChatId() {
+        return VOLUNTEER_CHAT_ID;
     }
 }

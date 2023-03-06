@@ -21,14 +21,14 @@ public class VolunteerService {
         return volunteerRepository.save(volunteer);
     }
 
-    public Volunteer readVolunteer(long id) {
+    public Volunteer read(long id) {
         logger.debug("Calling method read (id = {})", id);
         return volunteerRepository.findById(id).orElseThrow(() -> new NotFoundException("id not found"));
     }
 
     public Volunteer updateVolunteer(long id, Volunteer volunteer) {
         logger.debug("Calling method update Volunteer (Id = {})", volunteer.getId());
-        Volunteer oldVolunteer = readVolunteer(id);
+        Volunteer oldVolunteer = read(id);
         oldVolunteer.setName(volunteer.getName());
         oldVolunteer.setTelegram(volunteer.getTelegram());
         oldVolunteer.setPicture(volunteer.getPicture());
@@ -36,7 +36,7 @@ public class VolunteerService {
     }
     public Volunteer deleteVolunteer(long id) {
         logger.debug("Calling method delete Volunteer (Id = {})", id);
-        Volunteer volunteer = readVolunteer(id);
+        Volunteer volunteer = read(id);
         volunteerRepository.deleteById(id);
         return volunteer;
     }

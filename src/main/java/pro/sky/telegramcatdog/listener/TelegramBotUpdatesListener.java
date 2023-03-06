@@ -131,7 +131,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         userId += update.callbackQuery().from().id();
         logger.info("UserId = {}", userId);
         // To do: select random volunteer. Now it always selects the 1st one.
-        Volunteer volunteer = volunteerRepository.findById(1).orElse(null);
+        Volunteer volunteer = volunteerRepository.findById(1L).orElse(null);
         if (volunteer == null) {
             // Guest chat_id. Send message to the guest.
             chatId = update.callbackQuery().message().chat().id();

@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS volunteers
 --changeset itamerlan:4
 CREATE TABLE IF NOT EXISTS adoption_reports
 (
-    adopter_id  BIGSERIAL PRIMARY KEY,
+    id  BIGSERIAL PRIMARY KEY,
+    adopter_id  BIGSERIAL,
     report_date TIMESTAMP,
     pet_id      INT,
     picture     BYTEA,
