@@ -1,6 +1,7 @@
 package pro.sky.telegramcatdog.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,10 +13,29 @@ import pro.sky.telegramcatdog.service.BranchParamsService;
 @RestController
 @RequestMapping("pet-shelter/params")
 public class BranchParamsController {
-    private final BranchParamsService shelterParamsService;
+    private final BranchParamsService branchParamsService;
 
-    public BranchParamsController(BranchParamsService shelterParamsService) {
-        this.shelterParamsService = shelterParamsService;
+    public BranchParamsController(BranchParamsService branchParamsService) {
+        this.branchParamsService = branchParamsService;
+    }
+
+    @Operation(
+            summary = "Поиск бранча по id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Найден бранч с параметрами",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = BranchParams.class)
+                            )
+                    )
+            },
+            tags = "Работа с бранчами"
+    )
+    @GetMapping("{id}")
+    public BranchParams getBranchById(@Parameter(description = "id бранча", example = "1") @PathVariable Integer id) {
+        return branchParamsService.getBranchById(id);
     }
 
     @Operation(
@@ -41,7 +61,7 @@ public class BranchParamsController {
     )
     @PostMapping
     public BranchParams createBranch(@RequestBody BranchParams branchParams) {
-        return shelterParamsService.createBranch(branchParams);
+        return branchParamsService.createBranch(branchParams);
     }
 
     @Operation(
@@ -67,6 +87,6 @@ public class BranchParamsController {
     )
     @PutMapping
     public BranchParams editBranch(@RequestBody BranchParams branchParams) {
-        return shelterParamsService.editBranch(branchParams);
+        return branchParamsService.editBranch(branchParams);
     }
 }

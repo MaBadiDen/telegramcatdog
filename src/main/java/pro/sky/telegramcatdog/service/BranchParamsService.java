@@ -1,25 +1,34 @@
 package pro.sky.telegramcatdog.service;
 
 import org.springframework.stereotype.Service;
+import pro.sky.telegramcatdog.exception.BranchNotFoundException;
 import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 
 @Service
 public class BranchParamsService {
-    private final BranchParamsRepository shelterParamsRepository;
+    private final BranchParamsRepository branchParamsRepository;
 
     public BranchParamsService(BranchParamsRepository shelterParamsRepository) {
-        this.shelterParamsRepository = shelterParamsRepository;
+        this.branchParamsRepository = shelterParamsRepository;
+    }
+
+    public BranchParams getBranchById(int id) {
+        BranchParams branchParams = branchParamsRepository.findById(id).orElse(null);
+        if (branchParams == null) {
+            throw new BranchNotFoundException(id);
+        }
+        return branchParams;
     }
 
     public BranchParams createBranch(BranchParams branchParams) {
-        return shelterParamsRepository.save(branchParams);
+        return branchParamsRepository.save(branchParams);
     }
 
     public BranchParams editBranch(BranchParams branchParams) {
-        if (shelterParamsRepository.findById(branchParams.getId()).orElse(null) == null) {
+        if (branchParamsRepository.findById(branchParams.getId()).orElse(null) == null) {
             return null;
         }
-        return shelterParamsRepository.save(branchParams);
+        return branchParamsRepository.save(branchParams);
     }
 }

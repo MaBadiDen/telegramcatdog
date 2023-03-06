@@ -10,6 +10,9 @@ public class Constants {
 
     // Information messages
     public final static String WELCOME_MSG_TEXT = "Привет " + EMOJI_WAVE + " Это бот приюта для кошек о собак. Чем я могу Вам помочь? " + EMOJI_SMILEY;
+    public final static String CONTACT_TELEGRAM_USERNAME_TEXT = "Пожалуйста свяжитесь с пользователем %s. Ему нужна помощь.";
+    public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
+    public final static String NO_VOLUNTEERS_TEXT = "На данный момент нет свободных волонтеров.";
 
     // Buttons text
     public final static String BUTTON_STAGE1_TEXT = "Узнать информацию о приюте (этап 1)";
@@ -28,4 +31,11 @@ public class Constants {
     public final static String BUTTON_STAGE2_CALLBACK_TEXT = "button Stage2 clicked";
     public final static String BUTTON_STAGE3_CALLBACK_TEXT = "button Stage3 clicked";
     public final static String BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT = "button CallVolunteer clicked";
+
+    // For testing
+    public final static String LOCALHOST_URL = "http://localhost:";
+    public final static String BRANCHPARAMS_URL = "/pet-shelter/params";
+    public final static String PET_URL = "/pet-shelter/pet";
+    public final static String VOLUNTEER_URL = "/pet-shelter/volunteer";
+
 }
