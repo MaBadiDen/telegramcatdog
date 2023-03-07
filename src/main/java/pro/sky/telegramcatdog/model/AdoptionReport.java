@@ -1,23 +1,25 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "adoption_reports")
 public class AdoptionReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "adopter_id")
     private Long adopterId;
     private LocalDateTime reportDate;
+    @Column(name = "pet_id")
     private Integer petId;
     private byte[] picture;
     private String diet;
+    @Column(name = "wellbeing")
     private String wellBeing;
     private String behaviorChange ;
 

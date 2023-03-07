@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import pro.sky.telegramcatdog.model.Volunteer;
 
 @Repository
-public interface VolunteerRepository extends JpaRepository<Volunteer, Integer> {
+public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
 
 }

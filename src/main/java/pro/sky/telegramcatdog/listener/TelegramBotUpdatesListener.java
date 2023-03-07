@@ -131,7 +131,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         userId += update.callbackQuery().from().id();
         logger.info("UserId = {}", userId);
         // To do: select random volunteer. Now it always selects the 1st one.
-        Volunteer volunteer = volunteerRepository.findById(1).orElse(null);
+        Volunteer volunteer = volunteerRepository.findById(1L).orElse(null);
         if (volunteer == null) {
             // Guest chat_id. Send message to the guest.
             chatId = update.callbackQuery().message().chat().id();
@@ -139,7 +139,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             sendMessage(message);
         } else {
             // Volunteer chat_id. Send message to volunteer.
-            chatId = volunteer.getTelegramChatId();
+            chatId = volunteer.getChatId();
             if (update.callbackQuery().from().username() != null) {
                 userId = "@" + update.callbackQuery().from().username();
                 SendMessage message = new SendMessage(chatId, String.format(CONTACT_TELEGRAM_USERNAME_TEXT, userId));

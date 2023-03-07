@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS volunteers
 --changeset itamerlan:4
 CREATE TABLE IF NOT EXISTS adoption_reports
 (
-    adopter_id  BIGSERIAL PRIMARY KEY,
+    id  BIGSERIAL PRIMARY KEY,
+    adopter_id  BIGSERIAL,
     report_date TIMESTAMP,
     pet_id      INT,
     picture     BYTEA,
@@ -74,9 +75,10 @@ CREATE TABLE IF NOT EXISTS pets
     sex         INT  -- enum Sex
     --picture     BYTEA,
     --adopter_id  INT  -- lookup to [adopters] table
-)
+);
 
 -- changeset alexeym75:3
 ALTER TABLE volunteers DROP COLUMN telegram;
-ALTER TABLE volunteers ADD COLUMN telegram_chat_id BIGINT;
-ALTER TABLE volunteers ADD COLUMN telegram_username VARCHAR;
+ALTER TABLE volunteers ADD COLUMN chat_id BIGINT;
+ALTER TABLE volunteers ADD COLUMN username VARCHAR;
+
