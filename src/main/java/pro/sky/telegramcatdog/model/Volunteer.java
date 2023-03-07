@@ -13,13 +13,13 @@ public class Volunteer {
     private Long id;
     private String name;
     @Column(name = "chat_id")
-    private Integer chatId;
+    private Long chatId;
     private String username;
     private byte[] picture;
     public Volunteer() {
     }
 
-    public Volunteer(Long id, String name, Integer chatId, String username, byte[] picture) {
+    public Volunteer(Long id, String name, Long chatId, String username, byte[] picture) {
         this.id = id;
         this.name = name;
         this.chatId = chatId;
@@ -60,11 +60,11 @@ public class Volunteer {
         this.id = id;
     }
 
-    public Integer getChatId() {
+    public Long getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(Long chatId) {
         this.chatId = chatId;
     }
 

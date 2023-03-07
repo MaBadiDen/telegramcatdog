@@ -36,7 +36,7 @@ public class VolunteerController {
             tags = "Работа с волонтерами"
     )
     @GetMapping("{volunteerId}")
-    public ResponseEntity<Volunteer> findVolunteer(@PathVariable long volunteerId) {
+    public ResponseEntity<Volunteer> readVolunteer(@PathVariable long volunteerId) {
         Volunteer findVolunteer = volunteerService.read(volunteerId);
         if (findVolunteer == null) {
             return ResponseEntity.notFound().build();

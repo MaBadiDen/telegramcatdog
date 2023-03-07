@@ -12,8 +12,10 @@ public class AdoptionReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @Column(name = "adopter_id")
     private Long adopterId;
     private LocalDateTime reportDate;
+    @Column(name = "pet_id")
     private Integer petId;
     private byte[] picture;
     private String diet;
