@@ -1,23 +1,33 @@
 package pro.sky.telegramcatdog.controller;
 
+import com.pengrad.telegrambot.TelegramBot;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import pro.sky.telegramcatdog.model.Volunteer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static pro.sky.telegramcatdog.constants.Constants.LOCALHOST_URL;
 import static pro.sky.telegramcatdog.constants.Constants.VOLUNTEER_URL;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 class VolunteerControllerTest {
 
     @LocalServerPort
     private int port;
+
+    @MockBean
+    private TelegramBot telegramBot;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -25,7 +35,7 @@ class VolunteerControllerTest {
     @Test
     void getVolunteer() {
         // Create new volunteer and check that it was created OK
-        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin");
+        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin", null);
         ResponseEntity<Volunteer> responseCreated = getCreateVolunteerResponse(volunteer);
         assertCreatedVolunteer(volunteer, responseCreated);
 
@@ -42,7 +52,7 @@ class VolunteerControllerTest {
 
     @Test
     void createVolunteer() {
-        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin");;
+        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin", null);;
         ResponseEntity<Volunteer> response = getCreateVolunteerResponse(volunteer);
         assertCreatedVolunteer(volunteer, response);
     }
@@ -55,19 +65,21 @@ class VolunteerControllerTest {
         long newChatId = 1122334455;
 
         // Create new volunteer first and check that it was created OK
-        Volunteer volunteer = new Volunteer(1, oldName, oldChatId, "https://t.me/vasyapupkin");
+        Volunteer volunteer = new Volunteer(1, oldName, oldChatId, "https://t.me/vasyapupkin", null);
         ResponseEntity<Volunteer> responseCreated = getCreateVolunteerResponse(volunteer);
         assertCreatedVolunteer(volunteer, responseCreated);
 
         // Modify the created volunteer
         Volunteer createdVolunteer = responseCreated.getBody();
         createdVolunteer.setName(newName);
-        createdVolunteer.setTelegramChatId(newChatId);
+        createdVolunteer.setChatId(newChatId);
 
         // Update the modified volunteer in db
+        Map< String, String > params = new HashMap< String, String >();
+        params.put("id", Long.toString(createdVolunteer.getId()));
         restTemplate.put(
-                LOCALHOST_URL + port + VOLUNTEER_URL,
-                createdVolunteer);
+                LOCALHOST_URL + port + VOLUNTEER_URL + "/{id}",
+                createdVolunteer, params);
 
         // Try to get the updated volunteer by its id.
         ResponseEntity<Volunteer> response = restTemplate.getForEntity(
@@ -78,7 +90,7 @@ class VolunteerControllerTest {
         Assertions.assertThat(response.getBody()).isNotNull();
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(response.getBody().getName()).isEqualTo(newName);
-        Assertions.assertThat(response.getBody().getTelegramChatId()).isEqualTo(newChatId);
+        Assertions.assertThat(response.getBody().getChatId()).isEqualTo(newChatId);
     }
 
     private ResponseEntity<Volunteer> getCreateVolunteerResponse(Volunteer volunteer) {

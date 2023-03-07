@@ -1,12 +1,11 @@
 package pro.sky.telegramcatdog.controller;
 
-import org.springframework.http.ResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.service.VolunteerService;
@@ -96,10 +95,9 @@ public class VolunteerController {
                     )
             )
     )
-    @PutMapping
+    @PutMapping("{volunteerId}")
     public Volunteer updateVolunteer(@PathVariable long volunteerId,
                                    @RequestBody Volunteer volunteer) {
         return volunteerService.updateVolunteer(volunteerId, volunteer);
     }
-
 }
