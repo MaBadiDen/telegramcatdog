@@ -1,0 +1,10 @@
+{
+  "callback_query": {
+    "message": {
+      "chat": {
+        "id": 1234567809
+      }
+    },
+    "data": "%callback_query_data%"
+  }
+}

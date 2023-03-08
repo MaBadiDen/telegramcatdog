@@ -66,7 +66,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private void sendMessage(SendMessage message) {
         SendResponse response = telegramBot.execute(message);
-        if (!response.isOk()) {
+        if (response != null && !response.isOk()) {
             logger.warn("Message was not sent: {}, error code: {}", message, response.errorCode());
         }
     }
@@ -157,12 +157,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(message);
     }
 
-        /**
-         * Sends technical message that the button has been clicked.
-         * Can be disabled if it is not needed.
-         * @param chatId sends message to this chat
-         * @param message the message itself
-         */
+    /**
+     * Sends technical message that the button has been clicked.
+     * Can be disabled if it is not needed.
+     * @param chatId sends message to this chat
+     * @param message the message itself
+     */
     private void sendButtonClickMessage(long chatId, String message) {
         sendMessage(new SendMessage(chatId, message));
     }
