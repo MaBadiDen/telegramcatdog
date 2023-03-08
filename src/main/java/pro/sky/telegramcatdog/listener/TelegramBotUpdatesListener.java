@@ -41,7 +41,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             logger.info("Processing update: {}", update);
 
-            // Process welcome message (stage 0)
+            // Process shelter type selection message
             if (update.message() != null) {
                 String incomeMsgText = update.message().text();
                 // For stickers incomeMsgText is null
@@ -50,13 +50,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 long chatId = update.message().chat().id();
                 if (incomeMsgText.equals("/start")) {
-                    SendMessage message = new SendMessage(chatId, WELCOME_MSG_TEXT);
+                    SendMessage message = new SendMessage(chatId, SHELTER_TYPE_SELECT_MSG_TEXT);
                     // Adding buttons
-                    message.replyMarkup(createButtonsStage0());
+                    message.replyMarkup(createButtonsShelterTypeSelect());
                     sendMessage(message);
                 }
             }
-            // Process buttons clicks
+            // Process button clicks
             else {
                 processButtonClick(update);
             }
@@ -72,19 +72,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
+     * Creates buttons for the shelter type selection message (reply to the /start command)
+     * @return {@code InlineKeyboardMarkup}
+     */
+    private InlineKeyboardMarkup createButtonsShelterTypeSelect() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_CAT_SHELTER_TEXT).callbackData(BUTTON_CAT_SHELTER_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_DOG_SHELTER_TEXT).callbackData(BUTTON_DOG_SHELTER_CALLBACK_TEXT));
+        return inlineKeyboardMarkup;
+    }
+
+    /**
      * Creates the buttons for the welcome message (reply to the /start command) at Stage 0
-     * @return InlineKeyboardMarkup
+     * @return {@code InlineKeyboardMarkup}
      */
     private InlineKeyboardMarkup createButtonsStage0() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton buttonStage1 = new InlineKeyboardButton(BUTTON_STAGE1_TEXT).callbackData(BUTTON_STAGE1_CALLBACK_TEXT);
-        InlineKeyboardButton buttonStage2 = new InlineKeyboardButton(BUTTON_STAGE2_TEXT).callbackData(BUTTON_STAGE2_CALLBACK_TEXT);
-        InlineKeyboardButton buttonStage3 = new InlineKeyboardButton(BUTTON_STAGE3_TEXT).callbackData(BUTTON_STAGE3_CALLBACK_TEXT);
-        InlineKeyboardButton buttonCallVolunteer = new InlineKeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT).callbackData(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
-        inlineKeyboardMarkup.addRow(buttonStage1);
-        inlineKeyboardMarkup.addRow(buttonStage2);
-        inlineKeyboardMarkup.addRow(buttonStage3);
-        inlineKeyboardMarkup.addRow(buttonCallVolunteer);
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE1_TEXT).callbackData(BUTTON_STAGE1_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE2_TEXT).callbackData(BUTTON_STAGE2_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE3_TEXT).callbackData(BUTTON_STAGE3_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT).callbackData(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT));
         return inlineKeyboardMarkup;
     }
 
@@ -96,31 +103,63 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      * @see InlineKeyboardButton#callbackData()
      */
     private void processButtonClick(Update update) {
-        //SendMessage message = null;
         CallbackQuery callbackQuery = update.callbackQuery();
         if (callbackQuery != null) {
             long chatId = callbackQuery.message().chat().id();
-            if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) {
+            if (callbackQuery.data().equals(BUTTON_CAT_SHELTER_CALLBACK_TEXT)) {
+                // Cat shelter selected
+                sendButtonClickMessage(chatId, BUTTON_CAT_SHELTER_CALLBACK_TEXT);
+                SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+                // Adding buttons
+                message.replyMarkup(createButtonsStage0());
+                sendMessage(message);
+            } else if (callbackQuery.data().equals(BUTTON_DOG_SHELTER_CALLBACK_TEXT)) {
+                // Dog shelter selected
+                sendButtonClickMessage(chatId, BUTTON_DOG_SHELTER_CALLBACK_TEXT);
+                SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+                // Adding buttons
+                message.replyMarkup(createButtonsStage0());
+                sendMessage(message);
+            } else if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) {
                 // General info about the shelter (stage 1)
-                sendMessage(new SendMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT));
+                sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
+
+                // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+
             } else if (callbackQuery.data().equals(BUTTON_STAGE2_CALLBACK_TEXT)) {
                 // How to adopt a dog (stage 2)
-                sendMessage(new SendMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT));
+                sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
+
+                // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+
             } else if (callbackQuery.data().equals(BUTTON_STAGE3_CALLBACK_TEXT)) {
                 // Send a follow-up report (stage 3)
-                sendMessage(new SendMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT));
+                sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
+
+                // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
+
             } else if (callbackQuery.data().equals(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT)) {
                 // Call a volunteer
-                sendMessage(new SendMessage(chatId, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT));
+                sendButtonClickMessage(chatId, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
                 callVolunteer(update);
             }
         }
     }
 
     /**
+     * Sends technical message that the button has been clicked.
+     * Can be disabled if it is not needed.
+     * @param chatId sends message to this chat
+     * @param message the message itself
+     */
+    private void sendButtonClickMessage(long chatId, String message) {
+        sendMessage(new SendMessage(chatId, message));
+    }
+
+    /**
      * Generates and sends message to volunteer from volunteers table.
-     * If {@code @username} of the guest is defined it refers him by his {@code @username}.
-     * Otherwise, it refers him by his {@code chat_id}.
+     * If {@code @username} of the guest is defined it mentions him by {@code @username}.
+     * Otherwise, it mentions him by {@code chat_id}.
      * If volunteers table is empty - sends {@code NO_VOLUNTEERS_TEXT} message.
      *
      * @param update 'Call a volunteer' button click.
