@@ -4,22 +4,21 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-
 @Entity
 @Table(name = "volunteers")
 public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
     private String name;
     @Column(name = "chat_id")
-    private Long chatId;
+    private long chatId;
     private String username;
     private byte[] picture;
     public Volunteer() {
     }
 
-    public Volunteer(Long id, String name, Long chatId, String username, byte[] picture) {
+    public Volunteer(long id, String name, long chatId, String username, byte[] picture) {
         this.id = id;
         this.name = name;
         this.chatId = chatId;
@@ -83,5 +82,4 @@ public class Volunteer {
     public void setPicture(byte[] picture) {
         this.picture = picture;
     }
-
 }
