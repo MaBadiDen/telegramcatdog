@@ -106,20 +106,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         CallbackQuery callbackQuery = update.callbackQuery();
         if (callbackQuery != null) {
             long chatId = callbackQuery.message().chat().id();
+
             if (callbackQuery.data().equals(BUTTON_CAT_SHELTER_CALLBACK_TEXT)) {
                 // Cat shelter selected
                 sendButtonClickMessage(chatId, BUTTON_CAT_SHELTER_CALLBACK_TEXT);
-                SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
-                // Adding buttons
-                message.replyMarkup(createButtonsStage0());
-                sendMessage(message);
+                processCatShelterClick(chatId);
+
             } else if (callbackQuery.data().equals(BUTTON_DOG_SHELTER_CALLBACK_TEXT)) {
                 // Dog shelter selected
                 sendButtonClickMessage(chatId, BUTTON_DOG_SHELTER_CALLBACK_TEXT);
-                SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
-                // Adding buttons
-                message.replyMarkup(createButtonsStage0());
-                sendMessage(message);
+                processDogShelterClick(chatId);
+
             } else if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) {
                 // General info about the shelter (stage 1)
                 sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
@@ -146,12 +143,26 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
-    /**
-     * Sends technical message that the button has been clicked.
-     * Can be disabled if it is not needed.
-     * @param chatId sends message to this chat
-     * @param message the message itself
-     */
+    private void processCatShelterClick(long chatId) {
+        SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsStage0());
+        sendMessage(message);
+    }
+
+    private void processDogShelterClick(long chatId) {
+        SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsStage0());
+        sendMessage(message);
+    }
+
+        /**
+         * Sends technical message that the button has been clicked.
+         * Can be disabled if it is not needed.
+         * @param chatId sends message to this chat
+         * @param message the message itself
+         */
     private void sendButtonClickMessage(long chatId, String message) {
         sendMessage(new SendMessage(chatId, message));
     }
