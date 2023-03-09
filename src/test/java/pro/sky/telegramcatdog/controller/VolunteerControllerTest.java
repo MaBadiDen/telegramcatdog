@@ -52,7 +52,7 @@ class VolunteerControllerTest {
 
     @Test
     void createVolunteer() {
-        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin", null);;
+        Volunteer volunteer = new Volunteer(1, "Vasya", 1234567809, "https://t.me/vasyapupkin", null);
         ResponseEntity<Volunteer> response = getCreateVolunteerResponse(volunteer);
         assertCreatedVolunteer(volunteer, response);
     }
