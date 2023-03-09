@@ -5,6 +5,9 @@
         "id": 1234567809
       }
     },
-    "data": "%callback_query_data%"
+    "from": {
+      "id": 1122334455
+    },
+    "data": "%message_text%"
   }
 }
