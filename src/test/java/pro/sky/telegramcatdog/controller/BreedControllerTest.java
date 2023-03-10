@@ -19,7 +19,7 @@ import static pro.sky.telegramcatdog.constants.Constants.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class BreedParamsControllerTest {
+class BreedControllerTest {
 
     @LocalServerPort
     private int port;
