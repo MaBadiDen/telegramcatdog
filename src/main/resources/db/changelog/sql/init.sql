@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS adoption_reports
     diet        VARCHAR,
     wellbeing   VARCHAR,
     behavior_change VARCHAR
-)
+);
 
 -- changeset alexeym75:1
 CREATE TABLE IF NOT EXISTS branch_params
@@ -100,3 +100,11 @@ ALTER TABLE pets ADD COLUMN adopter_id INT; -- lookup to [adopters] table
 ALTER TABLE guests DROP COLUMN telegram_id;
 ALTER TABLE guests ADD COLUMN chat_id BIGINT;
 ALTER TABLE guests ADD COLUMN username VARCHAR;
+
+--changeset olgaBoke:1
+CREATE TABLE IF NOT EXISTS breeds
+(
+    id		    SERIAL PRIMARY KEY,
+    pet_type	INT, -- enam PetTypes
+    name	    VARCHAR
+);
