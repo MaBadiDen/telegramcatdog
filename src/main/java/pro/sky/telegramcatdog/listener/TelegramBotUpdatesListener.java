@@ -13,9 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -26,10 +29,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private TelegramBot telegramBot;
     private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
+    private final GuestRepository guestRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
+        this.guestRepository = guestRepository;
     }
 
     @PostConstruct
@@ -50,12 +55,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (incomeMsgText == null) {
                     return;
                 }
-                long chatId = update.message().chat().id();
                 if (incomeMsgText.equals("/start")) {
-                    SendMessage message = new SendMessage(chatId, SHELTER_TYPE_SELECT_MSG_TEXT);
-                    // Adding buttons
-                    message.replyMarkup(createButtonsShelterTypeSelect());
-                    sendMessage(message);
+                    processStartCommand(update);
                 }
             }
             // Process button clicks
@@ -142,17 +143,47 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
+    private void processStartCommand(Update update) {
+        long chatId = update.message().chat().id();
+        Guest guest = guestRepository.findByChatId(chatId);
+        if (guest == null) {
+            sendShelterTypeSelectMessage(chatId);
+        } else {
+            shelterType = guest.getLastMenu();
+            switch (guest.getLastMenu()) {
+                case DOG:
+                    sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+                    break;
+                case CAT:
+                    sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+                    break;
+                default:
+                    sendShelterTypeSelectMessage(chatId);
+            }
+        }
+    }
+
     private void processCatShelterClick(long chatId) {
         shelterType = PetType.CAT;
-        SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
-        // Adding buttons
-        message.replyMarkup(createButtonsStage0());
-        sendMessage(message);
+        saveGuest(chatId, shelterType);
+        sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
     }
 
     private void processDogShelterClick(long chatId) {
         shelterType = PetType.DOG;
-        SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+        saveGuest(chatId, shelterType);
+        sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+    }
+
+    private void sendShelterTypeSelectMessage(long chatId) {
+        SendMessage message = new SendMessage(chatId, SHELTER_TYPE_SELECT_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsShelterTypeSelect());
+        sendMessage(message);
+    }
+
+    private void sendStage0Message(long chatId, String messageText) {
+        SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
         message.replyMarkup(createButtonsStage0());
         sendMessage(message);
@@ -226,6 +257,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 SendMessage message = new SendMessage(chatId, String.format(CONTACT_TELEGRAM_ID_TEXT, userId));
                 sendMessage(message);
             }
+        }
+    }
+
+    private void saveGuest(long chatId, PetType lastMenu) {
+        Guest guest = guestRepository.findByChatId(chatId);
+        if (guest == null) {
+            guest = new Guest(chatId, new Timestamp(System.currentTimeMillis()), lastMenu);
+            guestRepository.save(guest);
         }
     }
 }

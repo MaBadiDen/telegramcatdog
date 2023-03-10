@@ -2,6 +2,7 @@ package pro.sky.telegramcatdog.model;
 
 
 import jakarta.persistence.*;
+import pro.sky.telegramcatdog.constants.PetType;
 
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -13,17 +14,18 @@ public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String telegramId;
+    @Column(name = "chat_id")
+    private long chatId;
+    private String username;
     private Timestamp lastVisit;
-    private int lastMenu;
+    private PetType lastMenu;
 
     public Guest() {
 
     }
 
-    public Guest( String telegramId, Timestamp lastVisit, int lastMenu) {
-
-        this.telegramId = telegramId;
+    public Guest(long chatId, Timestamp lastVisit, PetType lastMenu) {
+        this.chatId = chatId;
         this.lastVisit = lastVisit;
         this.lastMenu = lastMenu;
     }
@@ -49,12 +51,12 @@ public class Guest {
         this.id = id;
     }
 
-    public String getTelegramId() {
-        return telegramId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setTelegramId(String telegramId) {
-        this.telegramId = telegramId;
+    public void setUsername(String telegramId) {
+        this.username = telegramId;
     }
 
     public Timestamp getLastVisit() {
@@ -65,11 +67,11 @@ public class Guest {
         this.lastVisit = lastVisit;
     }
 
-    public int getLastMenu() {
+    public PetType getLastMenu() {
         return lastMenu;
     }
 
-    public void setLastMenu(int lastMenu) {
+    public void setLastMenu(PetType lastMenu) {
         this.lastMenu = lastMenu;
     }
 }
