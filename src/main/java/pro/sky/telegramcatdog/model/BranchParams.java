@@ -1,10 +1,8 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -22,6 +20,9 @@ public class BranchParams {
     private String info;
     private int probPeriod;
     private int probExtend;
+
+    @OneToMany(mappedBy = "branchParamsId")
+    private Collection<Pet> pets;
 
     public BranchParams(int id, String name) {
         this.id = id;

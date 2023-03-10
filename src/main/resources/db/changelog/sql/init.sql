@@ -86,3 +86,5 @@ ALTER TABLE volunteers ADD COLUMN username VARCHAR;
 CREATE SEQUENCE branch_params_id_seq;
 ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
 
+--changeset itamerlan:5
+ALTER TABLE pets ADD COLUMN branch_params_id INT;

@@ -11,9 +11,11 @@ public class AdoptionReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
-    @Column(name = "adopter_id")
-    private Long adopterId;
+    private long id;
+
+    @ManyToOne
+    @JoinColumn(name = "adopter_id")
+    private Adopter adopterId;
     private LocalDateTime reportDate;
     @Column(name = "pet_id")
     private Integer petId;
@@ -47,11 +49,16 @@ public class AdoptionReport {
         this.id = id;
     }
 
-    public Long getAdopterId() {
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Adopter getAdopterId() {
         return adopterId;
     }
 
-    public void setAdopterId(Long adopterId) {
+    public void setAdopterId(Adopter adopterId) {
         this.adopterId = adopterId;
     }
 

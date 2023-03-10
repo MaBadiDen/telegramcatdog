@@ -17,6 +17,9 @@ public class Pet {
     private PetType petType;
     private Color color;
     private Sex sex;
+    @ManyToOne
+    @JoinColumn(name = "branch_params_id")
+    private BranchParams branchParamsId;
 
     public Pet() {
 

@@ -42,10 +42,27 @@ public class VolunteerController {
         }
         return ResponseEntity.ok(findVolunteer);
     }
+
+
+    @Operation(
+            summary = "Удаление волонтера по id",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Волонтер удален",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Volunteer.class)
+                            )
+                    )
+            },
+            tags = "Работа с волонтерами"
+    )
     @DeleteMapping("{volunteerId}")
     public void deleteVolunteer(@PathVariable long volunteerId) {
         volunteerService.deleteVolunteer(volunteerId);
     }
+
 
 
     @Operation(
@@ -73,6 +90,8 @@ public class VolunteerController {
     public Volunteer createVolunteer(@RequestBody Volunteer volunteer) {
         return volunteerService.createVolunteer(volunteer);
     }
+
+
 
     @Operation(
             summary = "Редактирование волонтера",

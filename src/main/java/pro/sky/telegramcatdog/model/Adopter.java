@@ -2,6 +2,7 @@ package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -17,22 +18,15 @@ public class Adopter {
     private String phone1;
     private String phone2;
     private String telegram;
-    private int volunteerId;
+
+    @ManyToOne
+    @JoinColumn(name = "volunteer_id")
+    private Volunteer volunteerId;
     private boolean onProbation;
     private boolean active;
+    @OneToMany(mappedBy = "adopterId")
+    private Collection<AdoptionReport> adoptionReports;
 
-    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId, boolean onProbation, boolean active) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.passport = passport;
-        this.age = age;
-        this.phone1 = phone1;
-        this.phone2 = phone2;
-        this.telegram = telegram;
-        this.volunteerId = volunteerId;
-        this.onProbation = onProbation;
-        this.active = active;
-    }
 
     public Adopter() {
 
@@ -115,12 +109,20 @@ public class Adopter {
         this.telegram = telegram;
     }
 
-    public int getVolunteerId() {
+    public Volunteer getVolunteerId() {
         return volunteerId;
     }
 
-    public void setVolunteerId(int volunteerId) {
+    public void setVolunteerId(Volunteer volunteerId) {
         this.volunteerId = volunteerId;
+    }
+
+    public Collection<AdoptionReport> getAdoptionReports() {
+        return adoptionReports;
+    }
+
+    public void setAdoptionReports(Collection<AdoptionReport> adoptionReports) {
+        this.adoptionReports = adoptionReports;
     }
 
     public boolean isOnProbation() {
