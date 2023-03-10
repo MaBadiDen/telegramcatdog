@@ -5,6 +5,7 @@ import pro.sky.telegramcatdog.constants.Color;
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.Sex;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,9 @@ public class Pet {
     private PetType petType;
     private Color color;
     private Sex sex;
+
+    @OneToMany(mappedBy = "petId")
+    private Collection<AdoptionReport> adoptionReports;
 
     public Pet() {
 

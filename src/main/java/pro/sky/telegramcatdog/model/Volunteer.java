@@ -2,6 +2,7 @@ package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +16,9 @@ public class Volunteer {
     private long chatId;
     private String username;
     private byte[] picture;
+    @OneToMany(mappedBy = "volunteerId")
+    private Collection<Adopter> adapters;
+
     public Volunteer() {
     }
 

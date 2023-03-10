@@ -12,11 +12,15 @@ public class AdoptionReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "adopter_id")
-    private Long adopterId;
+    @ManyToOne
+    @JoinColumn(name = "adopter_id")
+    private Adopter adopterId;
+
     private LocalDateTime reportDate;
-    @Column(name = "pet_id")
-    private Integer petId;
+
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet petId;
     private byte[] picture;
     private String diet;
     @Column(name = "wellbeing")
@@ -47,28 +51,12 @@ public class AdoptionReport {
         this.id = id;
     }
 
-    public Long getAdopterId() {
-        return adopterId;
-    }
-
-    public void setAdopterId(Long adopterId) {
-        this.adopterId = adopterId;
-    }
-
     public LocalDateTime getReportDate() {
         return reportDate;
     }
 
     public void setReportDate(LocalDateTime reportDate) {
         this.reportDate = reportDate;
-    }
-
-    public Integer getPetId() {
-        return petId;
-    }
-
-    public void setPetId(Integer petId) {
-        this.petId = petId;
     }
 
     public byte[] getPicture() {
@@ -101,5 +89,21 @@ public class AdoptionReport {
 
     public void setBehaviorChange(String behaviorChange) {
         this.behaviorChange = behaviorChange;
+    }
+
+    public Adopter getAdopterId() {
+        return adopterId;
+    }
+
+    public void setAdopterId(Adopter adopterId) {
+        this.adopterId = adopterId;
+    }
+
+    public Pet getPetId() {
+        return petId;
+    }
+
+    public void setPetId(Pet petId) {
+        this.petId = petId;
     }
 }
