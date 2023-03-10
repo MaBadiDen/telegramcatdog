@@ -96,3 +96,7 @@ ALTER TABLE pets ADD COLUMN breed_id INT; -- lookup to [breeds] table
 ALTER TABLE pets ADD COLUMN picture BYTEA;
 ALTER TABLE pets ADD COLUMN adopter_id INT; -- lookup to [adopters] table
 
+-- changeset alexeym75:7
+ALTER TABLE guests DROP COLUMN telegram_id;
+ALTER TABLE guests ADD COLUMN chat_id BIGINT;
+ALTER TABLE guests ADD COLUMN username VARCHAR;
