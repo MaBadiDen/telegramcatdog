@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -23,6 +24,7 @@ import static pro.sky.telegramcatdog.constants.Constants.*;
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private TelegramBot telegramBot;
+    private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository) {
@@ -120,20 +122,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } else if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) {
                 // General info about the shelter (stage 1)
                 sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
-
-                // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+                processStage1Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_STAGE2_CALLBACK_TEXT)) {
-                // How to adopt a dog (stage 2)
+                // How to adopt a dog/cat (stage 2)
                 sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
-
-                // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+                processStage2Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_STAGE3_CALLBACK_TEXT)) {
                 // Send a follow-up report (stage 3)
                 sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
-
-                // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
+                processStage3Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT)) {
                 // Call a volunteer
@@ -144,6 +143,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void processCatShelterClick(long chatId) {
+        shelterType = PetType.CAT;
         SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
         // Adding buttons
         message.replyMarkup(createButtonsStage0());
@@ -151,10 +151,38 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void processDogShelterClick(long chatId) {
+        shelterType = PetType.DOG;
         SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
         // Adding buttons
         message.replyMarkup(createButtonsStage0());
         sendMessage(message);
+    }
+
+    /**
+     * Processing request: General info about the shelter (stage 1)
+     * @param chatId
+     */
+    private void processStage1Click(long chatId) {
+
+        // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+    }
+
+    /**
+     * Processing request: How to adopt a dog/cat (stage 2)
+     * @param chatId
+     */
+    private void processStage2Click(long chatId) {
+
+        // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+    }
+
+    /**
+     * Processing request: Send a follow-up report (stage 3)
+     * @param chatId
+     */
+    private void processStage3Click(long chatId) {
+
+        // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
     }
 
     /**

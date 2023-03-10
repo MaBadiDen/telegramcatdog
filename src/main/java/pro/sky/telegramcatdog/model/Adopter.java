@@ -1,7 +1,9 @@
 package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
+import pro.sky.telegramcatdog.constants.AdopterStatus;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -18,10 +20,12 @@ public class Adopter {
     private String phone2;
     private String telegram;
     private int volunteerId;
-    private boolean onProbation;
-    private boolean active;
+    private AdopterStatus status;
 
-    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId, boolean onProbation, boolean active) {
+    @OneToMany(mappedBy = "adopterId")
+    private Collection<Pet> pets;
+
+    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.passport = passport;
@@ -30,8 +34,6 @@ public class Adopter {
         this.phone2 = phone2;
         this.telegram = telegram;
         this.volunteerId = volunteerId;
-        this.onProbation = onProbation;
-        this.active = active;
     }
 
     public Adopter() {
@@ -123,19 +125,11 @@ public class Adopter {
         this.volunteerId = volunteerId;
     }
 
-    public boolean isOnProbation() {
-        return onProbation;
+    public AdopterStatus getStatus() {
+        return status;
     }
 
-    public void setOnProbation(boolean onProbation) {
-        this.onProbation = onProbation;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(AdopterStatus status) {
+        this.status = status;
     }
 }

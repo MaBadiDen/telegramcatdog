@@ -86,3 +86,13 @@ ALTER TABLE volunteers ADD COLUMN username VARCHAR;
 CREATE SEQUENCE branch_params_id_seq;
 ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
 
+-- changeset alexeym75:5
+ALTER TABLE adopters DROP COLUMN on_probation;
+ALTER TABLE adopters DROP COLUMN active;
+ALTER TABLE adopters ADD COLUMN status INT;
+
+-- changeset alexeym75:6
+ALTER TABLE pets ADD COLUMN breed_id INT; -- lookup to [breeds] table
+ALTER TABLE pets ADD COLUMN picture BYTEA;
+ALTER TABLE pets ADD COLUMN adopter_id INT; -- lookup to [adopters] table
+
