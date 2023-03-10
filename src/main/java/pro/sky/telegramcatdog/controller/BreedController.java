@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.model.Breed;
 import pro.sky.telegramcatdog.service.BreedService;
 
@@ -34,7 +33,7 @@ public class BreedController {
                             )
                     )
             },
-            tags = "Работа с породой"
+            tags = "Работа с породами"
     )
     @GetMapping("{id}")
     public Breed getBreedId(@Parameter(description = "id породы", example = "1") @PathVariable Integer id) {
