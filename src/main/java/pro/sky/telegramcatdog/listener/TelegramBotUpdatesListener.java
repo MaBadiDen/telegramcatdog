@@ -12,9 +12,13 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -23,11 +27,14 @@ import static pro.sky.telegramcatdog.constants.Constants.*;
 public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private TelegramBot telegramBot;
+    private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
+    private final GuestRepository guestRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
+        this.guestRepository = guestRepository;
     }
 
     @PostConstruct
@@ -48,12 +55,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (incomeMsgText == null) {
                     return;
                 }
-                long chatId = update.message().chat().id();
                 if (incomeMsgText.equals("/start")) {
-                    SendMessage message = new SendMessage(chatId, SHELTER_TYPE_SELECT_MSG_TEXT);
-                    // Adding buttons
-                    message.replyMarkup(createButtonsShelterTypeSelect());
-                    sendMessage(message);
+                    processStartCommand(update);
                 }
             }
             // Process button clicks
@@ -120,20 +123,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } else if (callbackQuery.data().equals(BUTTON_STAGE1_CALLBACK_TEXT)) {
                 // General info about the shelter (stage 1)
                 sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
-
-                // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+                processStage1Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_STAGE2_CALLBACK_TEXT)) {
-                // How to adopt a dog (stage 2)
+                // How to adopt a dog/cat (stage 2)
                 sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
-
-                // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+                processStage2Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_STAGE3_CALLBACK_TEXT)) {
                 // Send a follow-up report (stage 3)
                 sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
-
-                // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
+                processStage3Click(chatId);
 
             } else if (callbackQuery.data().equals(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT)) {
                 // Call a volunteer
@@ -143,18 +143,77 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
+    private void processStartCommand(Update update) {
+        long chatId = update.message().chat().id();
+        Guest guest = guestRepository.findByChatId(chatId);
+        if (guest == null) {
+            sendShelterTypeSelectMessage(chatId);
+        } else {
+            shelterType = guest.getLastMenu();
+            switch (guest.getLastMenu()) {
+                case DOG:
+                    sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+                    break;
+                case CAT:
+                    sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+                    break;
+                default:
+                    sendShelterTypeSelectMessage(chatId);
+            }
+        }
+    }
+
     private void processCatShelterClick(long chatId) {
-        SendMessage message = new SendMessage(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+        shelterType = PetType.CAT;
+        saveGuest(chatId, shelterType);
+        sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+    }
+
+    private void processDogShelterClick(long chatId) {
+        shelterType = PetType.DOG;
+        saveGuest(chatId, shelterType);
+        sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+    }
+
+    private void sendShelterTypeSelectMessage(long chatId) {
+        SendMessage message = new SendMessage(chatId, SHELTER_TYPE_SELECT_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsShelterTypeSelect());
+        sendMessage(message);
+    }
+
+    private void sendStage0Message(long chatId, String messageText) {
+        SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
         message.replyMarkup(createButtonsStage0());
         sendMessage(message);
     }
 
-    private void processDogShelterClick(long chatId) {
-        SendMessage message = new SendMessage(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
-        // Adding buttons
-        message.replyMarkup(createButtonsStage0());
-        sendMessage(message);
+    /**
+     * Processing request: General info about the shelter (stage 1)
+     * @param chatId
+     */
+    private void processStage1Click(long chatId) {
+
+        // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+    }
+
+    /**
+     * Processing request: How to adopt a dog/cat (stage 2)
+     * @param chatId
+     */
+    private void processStage2Click(long chatId) {
+
+        // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+    }
+
+    /**
+     * Processing request: Send a follow-up report (stage 3)
+     * @param chatId
+     */
+    private void processStage3Click(long chatId) {
+
+        // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
     }
 
     /**
@@ -198,6 +257,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 SendMessage message = new SendMessage(chatId, String.format(CONTACT_TELEGRAM_ID_TEXT, userId));
                 sendMessage(message);
             }
+        }
+    }
+
+    private void saveGuest(long chatId, PetType lastMenu) {
+        Guest guest = guestRepository.findByChatId(chatId);
+        if (guest == null) {
+            guest = new Guest(chatId, new Timestamp(System.currentTimeMillis()), lastMenu);
+            guestRepository.save(guest);
         }
     }
 }

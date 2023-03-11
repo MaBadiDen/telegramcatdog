@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS adoption_reports
     diet        VARCHAR,
     wellbeing   VARCHAR,
     behavior_change VARCHAR
-)
+);
 
 -- changeset alexeym75:1
 CREATE TABLE IF NOT EXISTS branch_params
@@ -86,3 +86,25 @@ ALTER TABLE volunteers ADD COLUMN username VARCHAR;
 CREATE SEQUENCE branch_params_id_seq;
 ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
 
+-- changeset alexeym75:5
+ALTER TABLE adopters DROP COLUMN on_probation;
+ALTER TABLE adopters DROP COLUMN active;
+ALTER TABLE adopters ADD COLUMN status INT;
+
+-- changeset alexeym75:6
+ALTER TABLE pets ADD COLUMN breed_id INT; -- lookup to [breeds] table
+ALTER TABLE pets ADD COLUMN picture BYTEA;
+ALTER TABLE pets ADD COLUMN adopter_id INT; -- lookup to [adopters] table
+
+-- changeset alexeym75:7
+ALTER TABLE guests DROP COLUMN telegram_id;
+ALTER TABLE guests ADD COLUMN chat_id BIGINT;
+ALTER TABLE guests ADD COLUMN username VARCHAR;
+
+--changeset olgaBoke:1
+CREATE TABLE IF NOT EXISTS breeds
+(
+    id		    SERIAL PRIMARY KEY,
+    pet_type	INT, -- enam PetTypes
+    name	    VARCHAR
+);

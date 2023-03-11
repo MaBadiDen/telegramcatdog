@@ -1,8 +1,8 @@
 package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
+import pro.sky.telegramcatdog.constants.AdopterStatus;
 
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -18,14 +18,25 @@ public class Adopter {
     private String phone1;
     private String phone2;
     private String telegram;
-    @OneToMany(mappedBy = "adopterId")
-    private Collection<AdoptionReport> adoptionReports;
-    @ManyToOne
-    @JoinColumn(name = "volunteer_id")
-    private Volunteer volunteerId;
+    private int volunteerId;
+    private AdopterStatus status;
 
+    @OneToMany(mappedBy = "adopterId")
+    private Collection<Pet> pets;
+
+    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.passport = passport;
+        this.age = age;
+        this.phone1 = phone1;
+        this.phone2 = phone2;
+        this.telegram = telegram;
+        this.volunteerId = volunteerId;
+    }
 
     public Adopter() {
+
     }
 
     @Override
@@ -105,11 +116,19 @@ public class Adopter {
         this.telegram = telegram;
     }
 
-    public Volunteer getVolunteerId() {
+    public int getVolunteerId() {
         return volunteerId;
     }
 
-    public void setVolunteerId(Volunteer volunteerId) {
+    public void setVolunteerId(int volunteerId) {
         this.volunteerId = volunteerId;
+    }
+
+    public AdopterStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AdopterStatus status) {
+        this.status = status;
     }
 }
