@@ -83,6 +83,6 @@ ALTER TABLE volunteers ADD COLUMN chat_id BIGINT;
 ALTER TABLE volunteers ADD COLUMN username VARCHAR;
 
 -- changeset alexeym75:4
---CREATE SEQUENCE branch_params_id_seq;
---ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
+CREATE SEQUENCE branch_params_id_seq;
+ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
 
