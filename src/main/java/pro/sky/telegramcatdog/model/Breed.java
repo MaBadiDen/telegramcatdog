@@ -14,6 +14,7 @@ public class Breed {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "pet_type")
     private PetType petType;
 
     private String name;

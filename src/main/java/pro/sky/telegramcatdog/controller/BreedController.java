@@ -78,7 +78,6 @@ public class BreedController {
                             )
                     )
             },
-
             tags = "Работа с породами",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Новые параметры породы",
