@@ -17,7 +17,7 @@ public class Volunteer {
     private String username;
     private byte[] picture;
     @OneToMany(mappedBy = "volunteerId")
-    private Collection<Adopter> adapters;
+    private Collection<Adopter> adopters;
 
     public Volunteer() {
     }

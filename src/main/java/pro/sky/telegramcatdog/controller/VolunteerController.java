@@ -43,9 +43,6 @@ public class VolunteerController {
         return ResponseEntity.ok(findVolunteer);
     }
 
-
-
-
     @Operation(
             summary = "Удаление волонтера по id",
             responses = {
@@ -64,7 +61,6 @@ public class VolunteerController {
     public void deleteVolunteer(@PathVariable long volunteerId) {
         volunteerService.deleteVolunteer(volunteerId);
     }
-
 
     @Operation(
             summary = "Добавление нового волонтера",
