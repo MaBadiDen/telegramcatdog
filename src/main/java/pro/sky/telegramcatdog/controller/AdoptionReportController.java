@@ -12,6 +12,7 @@ import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.service.AdoptionReportService;
 
 @RestController
+@RequestMapping("/pet-shelter/adoptionReport")
 public class AdoptionReportController {
 
     private final AdoptionReportService adoptionReportService;
@@ -43,7 +44,7 @@ public class AdoptionReportController {
                     )
             )
     )
-    @PostMapping("/createAdoptionReport")
+    @PostMapping
     public AdoptionReport createAdoptionReport(@RequestBody AdoptionReport adoptionReport) {
         return adoptionReportService.createAdoptionReport(adoptionReport);
     }
@@ -70,7 +71,7 @@ public class AdoptionReportController {
                     )
             )
     )
-    @PutMapping("{adoptionReportId}")
+    @PutMapping("/{adoptionReportId}")
     public AdoptionReport updateAdoptionReport(@PathVariable long adoptionReportId,
                             @RequestBody AdoptionReport adoptionReport) {
         return adoptionReportService.updateAdoptionReport(adoptionReportId, adoptionReport);

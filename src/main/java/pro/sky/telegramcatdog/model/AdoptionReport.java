@@ -2,6 +2,7 @@ package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,9 +16,7 @@ public class AdoptionReport {
     @ManyToOne
     @JoinColumn(name = "adopter_id")
     private Adopter adopterId;
-
-    private LocalDateTime reportDate;
-
+    private Timestamp reportDate;
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet petId;
@@ -25,9 +24,18 @@ public class AdoptionReport {
     private String diet;
     @Column(name = "wellbeing")
     private String wellBeing;
-    private String behaviorChange ;
+    private String behaviorChange;
 
     public AdoptionReport() {
+    }
+
+    public AdoptionReport(Long id, byte[] picture, String diet, String wellBeing, String behaviorChange) {
+        this.id = id;
+
+        this.picture = picture;
+        this.diet = diet;
+        this.wellBeing = wellBeing;
+        this.behaviorChange = behaviorChange;
     }
 
     @Override
@@ -51,12 +59,28 @@ public class AdoptionReport {
         this.id = id;
     }
 
-    public LocalDateTime getReportDate() {
+    public Adopter getAdopterId() {
+        return adopterId;
+    }
+
+    public void setAdopterId(Adopter adopterId) {
+        this.adopterId = adopterId;
+    }
+
+    public Timestamp getReportDate() {
         return reportDate;
     }
 
-    public void setReportDate(LocalDateTime reportDate) {
+    public void setReportDate(Timestamp reportDate) {
         this.reportDate = reportDate;
+    }
+
+    public Pet getPetId() {
+        return petId;
+    }
+
+    public void setPetId(Pet petId) {
+        this.petId = petId;
     }
 
     public byte[] getPicture() {
@@ -90,20 +114,6 @@ public class AdoptionReport {
     public void setBehaviorChange(String behaviorChange) {
         this.behaviorChange = behaviorChange;
     }
-
-    public Adopter getAdopterId() {
-        return adopterId;
-    }
-
-    public void setAdopterId(Adopter adopterId) {
-        this.adopterId = adopterId;
-    }
-
-    public Pet getPetId() {
-        return petId;
-    }
-
-    public void setPetId(Pet petId) {
-        this.petId = petId;
-    }
 }
+
+
