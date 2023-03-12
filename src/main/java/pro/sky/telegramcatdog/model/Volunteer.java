@@ -1,27 +1,32 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
+@Table(name = "volunteers")
 public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String telegram;
+    @Column(name = "chat_id")
+    private long chatId;
+    private String username;
     private byte[] picture;
+    @OneToMany(mappedBy = "volunteerId")
+    private Collection<Adopter> adopters;
+
     public Volunteer() {
     }
 
-    public Volunteer(long id, String name, String telegram, byte[] picture) {
+    public Volunteer(long id, String name, long chatId, String username, byte[] picture) {
         this.id = id;
         this.name = name;
-        this.telegram = telegram;
+        this.chatId = chatId;
+        this.username = username;
         this.picture = picture;
     }
 
@@ -54,12 +59,24 @@ public class Volunteer {
         this.name = name;
     }
 
-    public String getTelegram() {
-        return telegram;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setTelegram(String telegram) {
-        this.telegram = telegram;
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public byte[] getPicture() {

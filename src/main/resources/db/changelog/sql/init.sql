@@ -38,14 +38,15 @@ CREATE TABLE IF NOT EXISTS volunteers
 --changeset itamerlan:4
 CREATE TABLE IF NOT EXISTS adoption_reports
 (
-    adopter_id  BIGSERIAL PRIMARY KEY,
+    id  BIGSERIAL PRIMARY KEY,
+    adopter_id  BIGSERIAL,
     report_date TIMESTAMP,
     pet_id      INT,
     picture     BYTEA,
     diet        VARCHAR,
     wellbeing   VARCHAR,
     behavior_change VARCHAR
-)
+);
 
 -- changeset alexeym75:1
 CREATE TABLE IF NOT EXISTS branch_params
@@ -69,14 +70,46 @@ CREATE TABLE IF NOT EXISTS pets
     id          BIGSERIAL PRIMARY KEY,
     nick_name   VARCHAR,
     pet_type    INT, -- enum PetType
-    --breed_id	INT, -- lookup to [breeds] table
     color       INT, -- enum Color
     sex         INT  -- enum Sex
-    --picture     BYTEA,
-    --adopter_id  INT  -- lookup to [adopters] table
-)
+);
 
 -- changeset alexeym75:3
-ALTER TABLE volunteers DROP COLUMN telegram;
-ALTER TABLE volunteers ADD COLUMN telegram_chat_id BIGINT;
-ALTER TABLE volunteers ADD COLUMN telegram_username VARCHAR;
+ALTER TABLE volunteers DROP COLUMN IF EXISTS telegram;
+ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS chat_id BIGINT;
+ALTER TABLE volunteers ADD COLUMN IF NOT EXISTS username VARCHAR;
+
+-- changeset alexeym75:4
+CREATE SEQUENCE IF NOT EXISTS branch_params_id_seq;
+ALTER TABLE branch_params ALTER COLUMN id SET DEFAULT nextval('branch_params_id_seq');
+
+-- changeset alexeym75:5
+ALTER TABLE adopters DROP COLUMN IF EXISTS on_probation;
+ALTER TABLE adopters DROP COLUMN IF EXISTS active;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS status INT;
+
+-- changeset alexeym75:6
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS breed_id INT; -- lookup to [breeds] table
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS picture BYTEA;
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS adopter_id INT; -- lookup to [adopters] table
+
+-- changeset alexeym75:7
+ALTER TABLE guests DROP COLUMN IF EXISTS telegram_id;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS chat_id BIGINT;
+ALTER TABLE guests ADD COLUMN IF NOT EXISTS username VARCHAR;
+
+--changeset olgaBoke:1
+CREATE TABLE IF NOT EXISTS breeds
+(
+    id		    SERIAL PRIMARY KEY,
+    pet_type	INT, -- enam PetTypes
+    name	    VARCHAR
+);
+
+-- changeset truemabadi:3
+CREATE TABLE IF NOT EXISTS adoption_docs
+(
+    id           SERIAL PRIMARY KEY,
+    short_desc   VARCHAR,
+    description  VARCHAR
+)
