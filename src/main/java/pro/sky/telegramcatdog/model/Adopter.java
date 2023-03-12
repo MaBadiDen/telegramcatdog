@@ -3,6 +3,7 @@ package pro.sky.telegramcatdog.model;
 import jakarta.persistence.*;
 import pro.sky.telegramcatdog.constants.AdopterStatus;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
