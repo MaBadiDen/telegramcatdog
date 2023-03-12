@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegramcatdog.model.AdoptionDoc;
-import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.service.AdoptionDocService;
 
 @RestController
@@ -30,14 +29,14 @@ public class AdoptionDocController {
                             description = "Найден документ с параметрами",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = BranchParams.class)
+                                    schema = @Schema(implementation = AdoptionDoc.class)
                             )
                     )
             },
             tags = "Работа с документами"
     )
     @GetMapping("{id}")
-    public AdoptionDoc getAdoptionDocById(@Parameter(description = "id документа", example = "42") @PathVariable Long id) {
+    public AdoptionDoc readAdoptionDocById(@Parameter(description = "id документа", example = "42") @PathVariable Long id) {
         return adoptionDocService.readAdoptionDoc(id);
     }
 
@@ -49,7 +48,7 @@ public class AdoptionDocController {
                             description = "Добавлен новый документ с параметрами",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = BranchParams.class)
+                                    schema = @Schema(implementation = AdoptionDoc.class)
                             )
                     )
             },
