@@ -3,6 +3,7 @@ package pro.sky.telegramcatdog.model;
 import jakarta.persistence.*;
 import pro.sky.telegramcatdog.constants.PetType;
 
+import java.util.Collection;
 import java.util.Objects;
 
 
@@ -19,6 +20,8 @@ public class Breed {
 
     private String name;
 
+    @OneToMany(mappedBy = "breedId")
+    private Collection<Pet> pets;
 
     public Breed(){
 

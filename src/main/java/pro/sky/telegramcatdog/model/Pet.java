@@ -18,7 +18,9 @@ public class Pet {
     private Color color;
     private Sex sex;
     // to do: setup @ManyToOne linkage to Breed class when it is done
-    private int breedId;
+    @ManyToOne
+    @JoinColumn(name = "breed_id")
+    private Breed breedId;
     private byte[] picture;
     @ManyToOne
     @JoinColumn(name = "adopter_id")
@@ -68,7 +70,7 @@ public class Pet {
         return adopterId;
     }
 
-    public int getBreedId() {
+    public Breed getBreedId() {
         return breedId;
     }
 
