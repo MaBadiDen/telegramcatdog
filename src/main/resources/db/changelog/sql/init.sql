@@ -105,3 +105,11 @@ CREATE TABLE IF NOT EXISTS breeds
     pet_type	INT, -- enam PetTypes
     name	    VARCHAR
 );
+
+-- changeset truemabadi:3
+CREATE TABLE IF NOT EXISTS adoption_docs
+(
+    id           SERIAL PRIMARY KEY,
+    short_desc   VARCHAR,
+    description  VARCHAR
+)
