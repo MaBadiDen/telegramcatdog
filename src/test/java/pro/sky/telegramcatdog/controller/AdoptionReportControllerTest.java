@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import pro.sky.telegramcatdog.model.AdoptionReport;
+import pro.sky.telegramcatdog.model.Volunteer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,14 +33,14 @@ public class AdoptionReportControllerTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    void createAdoptionReport() {
+    void createAdoptionReportTest() {
         AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", "1");
         ResponseEntity<AdoptionReport> response = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, response);
     }
 
     @Test
-    void editAdoptionReport() {
+    void updateAdoptionReportTest() {
         String oldDiet = "1";
         String oldWellBeing = "1";
         String oldBehaviorChange = "1";
@@ -77,6 +78,25 @@ public class AdoptionReportControllerTest {
         Assertions.assertThat(response.getBody().getWellBeing()).isEqualTo(newWellBeing);
         Assertions.assertThat(response.getBody().getBehaviorChange()).isEqualTo(newBehaviorChange);
     }
+
+    @Test
+    void findAdoptionReportTest() {
+        // Create new AdoptionReport and check that it was created OK
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", "1");
+        ResponseEntity<AdoptionReport> responseCreated = getCreateAdoptionReportResponse(adoptionReport);
+        assertCreatedAdoptionReport(adoptionReport, responseCreated);
+
+        // Try to get the created volunteer by its id.
+        AdoptionReport createdAdoptionReport = responseCreated.getBody();
+        ResponseEntity<AdoptionReport> response = restTemplate.getForEntity(
+                LOCALHOST_URL + port + ADOPTION_REPORT_URL + '/' + createdAdoptionReport.getId(),
+                AdoptionReport.class);
+
+        // Check that the created and selected by id AdoptionReports are the same
+        Assertions.assertThat(response.getBody()).isEqualTo(createdAdoptionReport);
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 
 
     private ResponseEntity<AdoptionReport> getCreateAdoptionReportResponse(AdoptionReport adoptionReport) {
