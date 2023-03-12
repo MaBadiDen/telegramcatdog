@@ -5,6 +5,7 @@ import pro.sky.telegramcatdog.constants.Color;
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.Sex;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,9 @@ public class Pet {
     @ManyToOne
     @JoinColumn(name = "adopter_id")
     private Adopter adopterId;
+
+    @OneToMany(mappedBy = "petId")
+    private Collection<AdoptionReport> adoptionReports;
 
     public Pet() {
 

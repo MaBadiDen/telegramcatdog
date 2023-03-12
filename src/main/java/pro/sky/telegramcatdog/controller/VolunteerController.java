@@ -42,11 +42,6 @@ public class VolunteerController {
         }
         return ResponseEntity.ok(findVolunteer);
     }
-    @DeleteMapping("{volunteerId}")
-    public void deleteVolunteer(@PathVariable long volunteerId) {
-        volunteerService.deleteVolunteer(volunteerId);
-    }
-
 
     @Operation(
             summary = "Добавление нового волонтера",
