@@ -49,4 +49,6 @@ public class Constants {
     public final static String VOLUNTEER_URL = "/pet-shelter/volunteer";
     public final static String BREED_URL = "/pet-shelter/breed";
 
+    public final static String ADOPTIONDOC_URL = "/pet-shelter/docs";
+
 }
