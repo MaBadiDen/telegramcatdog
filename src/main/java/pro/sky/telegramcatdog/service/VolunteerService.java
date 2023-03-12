@@ -35,11 +35,6 @@ public class VolunteerService {
         oldVolunteer.setPicture(volunteer.getPicture());
         return volunteerRepository.save(oldVolunteer);
     }
-    public Volunteer deleteVolunteer(long id) {
-        logger.debug("Calling method delete Volunteer (Id = {})", id);
-        Volunteer volunteer = read(id);
-        volunteerRepository.deleteById(id);
-        return volunteer;
-    }
+
 
 }

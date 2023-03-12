@@ -44,25 +44,6 @@ public class VolunteerController {
     }
 
     @Operation(
-            summary = "Удаление волонтера по id",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Удален волонтер с параметрами",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Volunteer.class)
-                            )
-                    )
-            },
-            tags = "Работа с волонтерами"
-    )
-    @DeleteMapping("{volunteerId}")
-    public void deleteVolunteer(@PathVariable long volunteerId) {
-        volunteerService.deleteVolunteer(volunteerId);
-    }
-
-    @Operation(
             summary = "Добавление нового волонтера",
             responses = {
                     @ApiResponse(

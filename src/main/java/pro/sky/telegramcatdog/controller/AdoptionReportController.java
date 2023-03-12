@@ -102,22 +102,4 @@ public class AdoptionReportController {
         return ResponseEntity.ok(findAdoptionReport);
     }
 
-    @Operation(
-            summary = "удаление ежедневного отчета по id",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Удален ежедневный отчет с параметрами",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = AdoptionReport.class)
-                            )
-                    )
-            },
-            tags = "Работа с ежедневными отчетами"
-    )
-    @DeleteMapping("{adoptionReportId}")
-    public void deleteAdoptionReport(@PathVariable long adoptionReportId) {
-        adoptionReportService.deleteAdoptionReport(adoptionReportId);
-    }
 }

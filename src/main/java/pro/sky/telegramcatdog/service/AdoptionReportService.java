@@ -37,12 +37,4 @@ public class AdoptionReportService {
         oldVoAdoptionReport.setBehaviorChange(adoptionReport.getBehaviorChange());
         return adoptionReportRepository.save(oldVoAdoptionReport);
     }
-    public AdoptionReport deleteAdoptionReport(long id) {
-        logger.debug("Calling method delete AdoptionReport (Id = {})", id);
-        AdoptionReport adoptionReport = readAdoptionReport(id);
-        adoptionReportRepository.deleteById(id);
-        return adoptionReport;
-    }
-
-
 }
