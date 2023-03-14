@@ -1,9 +1,7 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import pro.sky.telegramcatdog.constants.PetType;
 
 import java.util.Objects;
 
@@ -22,6 +20,15 @@ public class BranchParams {
     private String info;
     private int probPeriod;
     private int probExtend;
+
+    @Column(name = "security_info")
+    private String securityInfo;
+
+    @Column(name = "security_contact")
+    private String securityContact;
+
+    @Column(name = "pet_type")
+    private PetType petType;
 
     public BranchParams(int id, String name) {
         this.id = id;
@@ -78,6 +85,18 @@ public class BranchParams {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSecurityInfo() {
+        return securityInfo;
+    }
+
+    public String getSecurityContact() {
+        return securityContact;
+    }
+
+    public PetType getPetType() {
+        return petType;
     }
 
     @Override

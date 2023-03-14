@@ -2,7 +2,6 @@ package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ public class AdoptionReport {
     @ManyToOne
     @JoinColumn(name = "adopter_id")
     private Adopter adopterId;
-    private Timestamp reportDate;
+    private LocalDateTime reportDate;
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet petId;
@@ -67,11 +66,11 @@ public class AdoptionReport {
         this.adopterId = adopterId;
     }
 
-    public Timestamp getReportDate() {
+    public LocalDateTime getReportDate() {
         return reportDate;
     }
 
-    public void setReportDate(Timestamp reportDate) {
+    public void setReportDate(LocalDateTime reportDate) {
         this.reportDate = reportDate;
     }
 

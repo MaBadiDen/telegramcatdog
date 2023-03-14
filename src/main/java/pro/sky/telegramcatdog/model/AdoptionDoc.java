@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "adoption_docs")
 public class AdoptionDoc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
