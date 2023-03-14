@@ -15,10 +15,15 @@ public class Constants {
     // Information messages
     public final static String SHELTER_TYPE_SELECT_MSG_TEXT = "Привет " + EMOJI_WAVE + " Выберите тип приюта " + EMOJI_POINT_DOWN;
     public final static String CAT_SHELTER_WELCOME_MSG_TEXT = "Вас приветствует приют для кошек. Чем я могу Вам помочь? " + EMOJI_SMILEY_CAT;
+    public final static String CAT_SHELTER_STAGE1_WELCOME_MSG_TEXT = "Этап 1: Узнать информацию о приюте.";
+    public final static String SHARE_CONTACT_MSG_TEXT = "Нажмите на кнопку, чтобы послать свои контактные данные.";
     public final static String DOG_SHELTER_WELCOME_MSG_TEXT = "Вас приветствует приют для собак. Чем я могу Вам помочь? " + EMOJI_DOG;
     public final static String CONTACT_TELEGRAM_USERNAME_TEXT = "Пожалуйста свяжитесь с пользователем %s. Ему нужна помощь.";
     public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
     public final static String NO_VOLUNTEERS_TEXT = "На данный момент нет свободных волонтеров.";
+    public final static String SAVE_ADOPTER_SUCCESS_TEXT = "Мы записали ваши контактные данные.";
+    public final static String ADOPTER_ALREADY_EXISTS_TEXT = "У нас уже есть ваши контактные данные.";
+    public final static String WE_WILL_CALL_YOU_TEXT = "Скоро с вами свяжется наш волонтер.";
 
     // Buttons text
     public final static String BUTTON_CAT_SHELTER_TEXT = "Приют для кошек";
@@ -27,6 +32,9 @@ public class Constants {
     public final static String BUTTON_STAGE2_TEXT = "Как взять собаку из приюта (этап 2)";
     public final static String BUTTON_STAGE3_TEXT = "Прислать отчет о питомце (этап 3)";
     public final static String BUTTON_CALL_VOLUNTEER_TEXT = "Позвать волонтера";
+    public final static String BUTTON_MAIN_MENU_TEXT = "Главное меню";
+    public final static String BUTTON_SHARE_CONTACT_TEXT = "Отправить контакт";
+    public final static String BUTTON_SHARE_CONTACT_DETAILS_TEXT = "Оставить свои контактные данные";
 
     // Buttons callback text
     /**
@@ -41,6 +49,7 @@ public class Constants {
     public final static String BUTTON_STAGE2_CALLBACK_TEXT = "button_Stage2_clicked";
     public final static String BUTTON_STAGE3_CALLBACK_TEXT = "button_Stage3_clicked";
     public final static String BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT = "button_CallVolunteer_clicked";
+    public final static String BUTTON_SHARE_CONTACT_CALLBACK_TEXT = "button_ShareContact_clicked";
 
     // REST endpoint testing urls
     public final static String LOCALHOST_URL = "http://localhost:";

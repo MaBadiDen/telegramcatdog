@@ -117,6 +117,13 @@ CREATE TABLE IF NOT EXISTS adoption_docs
 -- changeset alexeym75:8
 DROP SEQUENCE IF EXISTS adoption_reports_adopter_id_seq CASCADE;
 ALTER TABLE adoption_reports ALTER COLUMN adopter_id SET DATA TYPE BIGINT;
+
+-- changeset alexeym75:9
 ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_info TEXT;
 ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_contact VARCHAR;
 ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS pet_type INT;
+
+-- changeset alexeym75:10
+ALTER TABLE adopters DROP COLUMN IF EXISTS telegram;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS chat_id BIGINT;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS username VARCHAR;

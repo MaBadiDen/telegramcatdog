@@ -6,6 +6,8 @@ import com.pengrad.telegrambot.model.CallbackQuery;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
+import com.pengrad.telegrambot.model.request.KeyboardButton;
+import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
@@ -13,8 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.Adopter;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.AdopterRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -30,11 +34,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
+    private final AdopterRepository adopterRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
+        this.adopterRepository = adopterRepository;
     }
 
     @PostConstruct
@@ -48,14 +54,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             logger.info("Processing update: {}", update);
 
-            // Process shelter type selection message
             if (update.message() != null) {
-                String incomeMsgText = update.message().text();
-                // For stickers incomeMsgText is null
-                if (incomeMsgText == null) {
+                if (update.message().contact() != null) {
+                    // Save new adopter contacts in our db
+                    saveAdopter(update);
                     return;
                 }
-                if (incomeMsgText.equals("/start")) {
+                String incomeMsgText = update.message().text();
+                if (incomeMsgText == null) {
+                    // For stickers incomeMsgText is null
+                    return;
+                }
+                if (incomeMsgText.equals("/start") || incomeMsgText.equals(BUTTON_MAIN_MENU_TEXT)) {
                     processStartCommand(update);
                 }
             }
@@ -96,6 +106,29 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE3_TEXT).callbackData(BUTTON_STAGE3_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT).callbackData(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT));
         return inlineKeyboardMarkup;
+    }
+
+    private InlineKeyboardMarkup createButtonsStage1() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        // todo (Olga): Add more buttons here
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_SHARE_CONTACT_DETAILS_TEXT).callbackData(BUTTON_SHARE_CONTACT_CALLBACK_TEXT));
+        return inlineKeyboardMarkup;
+    }
+
+    private ReplyKeyboardMarkup createRequestContactKeyboardButton() {
+        KeyboardButton keyboardButton = new KeyboardButton(BUTTON_SHARE_CONTACT_TEXT);
+        keyboardButton.requestContact(true);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(keyboardButton);
+        replyKeyboardMarkup.resizeKeyboard(true);
+        return replyKeyboardMarkup;
+    }
+
+    private ReplyKeyboardMarkup createMainMenuKeyboardButtons() {
+        KeyboardButton keyboardButton1 = new KeyboardButton(BUTTON_MAIN_MENU_TEXT);
+        KeyboardButton keyboardButton2 = new KeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(keyboardButton1, keyboardButton2);
+        replyKeyboardMarkup.resizeKeyboard(true);
+        return replyKeyboardMarkup;
     }
 
     /**
@@ -139,8 +172,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 // Call a volunteer
                 sendButtonClickMessage(chatId, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
                 callVolunteer(update);
+
+            } else if (callbackQuery.data().equals(BUTTON_SHARE_CONTACT_CALLBACK_TEXT)) {
+                // Share your contact details
+                sendButtonClickMessage(chatId, BUTTON_SHARE_CONTACT_CALLBACK_TEXT);
+                shareContact(update);
             }
         }
+    }
+
+    private void shareContact(Update update) {
+        long chatId = update.callbackQuery().from().id();
+        SendMessage message = new SendMessage(chatId, SHARE_CONTACT_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createRequestContactKeyboardButton());
+        sendMessage(message);
     }
 
     private void processStartCommand(Update update) {
@@ -184,6 +230,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private void sendStage0Message(long chatId, String messageText) {
         SendMessage message = new SendMessage(chatId, messageText);
+        // Remove all buttons
+        //message.replyMarkup(new ReplyKeyboardRemove());
         // Adding buttons
         message.replyMarkup(createButtonsStage0());
         sendMessage(message);
@@ -195,7 +243,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     private void processStage1Click(long chatId) {
 
-        // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+        // todo (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+
+        SendMessage message = new SendMessage(chatId, CAT_SHELTER_STAGE1_WELCOME_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsStage1());
+        sendMessage(message);
     }
 
     /**
@@ -204,7 +257,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     private void processStage2Click(long chatId) {
 
-        // to do (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
+        // todo (Denis): Implement Stage 2 button click functionality (welcome message, buttons)
     }
 
     /**
@@ -213,7 +266,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      */
     private void processStage3Click(long chatId) {
 
-        // to do (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
+        // todo (Tamerlan): Implement Stage 3 button click functionality (welcome message, buttons)
     }
 
     /**
@@ -265,6 +318,27 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (guest == null) {
             guest = new Guest(chatId, new Timestamp(System.currentTimeMillis()), lastMenu);
             guestRepository.save(guest);
+        }
+    }
+
+    private void saveAdopter(Update update) {
+        if (update.message().contact() != null) {
+            String firstName = update.message().contact().firstName();
+            String lastName = update.message().contact().lastName();
+            String phone1 = update.message().contact().phoneNumber();
+            String username = update.message().chat().username();
+            long chatId = update.message().chat().id();
+
+            Adopter adopter = adopterRepository.findByChatId(chatId);
+            if (adopter == null) {
+                adopter = new Adopter(firstName, lastName, phone1, chatId, username);
+                adopterRepository.save(adopter);
+                SendMessage message = new SendMessage(chatId, SAVE_ADOPTER_SUCCESS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
+                sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
+            } else {
+                SendMessage message = new SendMessage(chatId, ADOPTER_ALREADY_EXISTS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
+                sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
+            }
         }
     }
 }

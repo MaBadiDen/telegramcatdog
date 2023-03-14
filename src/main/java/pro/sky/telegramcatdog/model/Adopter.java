@@ -18,22 +18,23 @@ public class Adopter {
     private int age;
     private String phone1;
     private String phone2;
-    private String telegram;
+
+    @Column(name = "chat_id")
+    private long chatId;
+
+    private String username;
     private int volunteerId;
     private AdopterStatus status;
 
     @OneToMany(mappedBy = "adopterId")
     private Collection<Pet> pets;
 
-    public Adopter(String firstName, String lastName, String passport, int age, String phone1, String phone2, String telegram, int volunteerId) {
+    public Adopter(String firstName, String lastName, String phone1, long chatId, String username) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.passport = passport;
-        this.age = age;
         this.phone1 = phone1;
-        this.phone2 = phone2;
-        this.telegram = telegram;
-        this.volunteerId = volunteerId;
+        this.chatId = chatId;
+        this.username = username;
     }
 
     public Adopter() {
@@ -109,14 +110,6 @@ public class Adopter {
         this.phone2 = phone2;
     }
 
-    public String getTelegram() {
-        return telegram;
-    }
-
-    public void setTelegram(String telegram) {
-        this.telegram = telegram;
-    }
-
     public int getVolunteerId() {
         return volunteerId;
     }
@@ -131,5 +124,13 @@ public class Adopter {
 
     public void setStatus(AdopterStatus status) {
         this.status = status;
+    }
+
+    public long getChatId() {
+        return chatId;
+    }
+
+    public String getUsername() {
+        return username;
     }
 }
