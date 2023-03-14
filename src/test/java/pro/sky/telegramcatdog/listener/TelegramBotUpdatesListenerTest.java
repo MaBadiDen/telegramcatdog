@@ -12,13 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -38,8 +42,12 @@ class TelegramBotUpdatesListenerTest {
     @Mock
     private VolunteerRepository volunteerRepository;
 
+    @Mock
+    private GuestRepository guestRepository;
+
+    /* Testing '/start' command when it is a new guest (unknown guest). */
     @Test
-    public void handleStartTest() throws URISyntaxException, IOException {
+    public void handleStartCommandNewGuestTest() throws URISyntaxException, IOException {
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
         Update update = getUpdateMessage(json, "/start");
@@ -51,6 +59,50 @@ class TelegramBotUpdatesListenerTest {
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
         Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(SHELTER_TYPE_SELECT_MSG_TEXT);
+    }
+
+    /* Testing '/start' command with the guest who has previously selected CAT shelter.
+    *  (and he is already saved in the [guests] table) */
+    @Test
+    public void handleStartCommandCatShelterGuestTest() throws URISyntaxException, IOException {
+        long chatId = 1234567809L;
+        Guest guest = new Guest(chatId, Timestamp.valueOf("2023-03-01 14:45:06"), PetType.CAT);
+
+        when(guestRepository.findByChatId(any(Long.class))).thenReturn(guest);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, "/start");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(chatId);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(CAT_SHELTER_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing '/start' command with the guest who has previously selected DOG shelter.
+     *  (and he is already saved in the [guests] table) */
+    @Test
+    public void handleStartCommandDogShelterGuestTest() throws URISyntaxException, IOException {
+        long chatId = 1234567809L;
+        Guest guest = new Guest(chatId, Timestamp.valueOf("2023-03-01 14:45:06"), PetType.DOG);
+
+        when(guestRepository.findByChatId(any(Long.class))).thenReturn(guest);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, "/start");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(chatId);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(DOG_SHELTER_WELCOME_MSG_TEXT);
     }
 
     @Test

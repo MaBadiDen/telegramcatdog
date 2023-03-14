@@ -113,3 +113,10 @@ CREATE TABLE IF NOT EXISTS adoption_docs
     short_desc   VARCHAR,
     description  VARCHAR
 )
+
+-- changeset alexeym75:8
+DROP SEQUENCE IF EXISTS adoption_reports_adopter_id_seq CASCADE;
+ALTER TABLE adoption_reports ALTER COLUMN adopter_id SET DATA TYPE BIGINT;
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_info TEXT;
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_contact VARCHAR;
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS pet_type INT;
