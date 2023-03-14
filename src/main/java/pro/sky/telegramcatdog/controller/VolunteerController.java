@@ -1,18 +1,16 @@
 package pro.sky.telegramcatdog.controller;
 
-import org.springframework.http.ResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.service.VolunteerService;
 
 @RestController
-public class VolunteerController {
 @RequestMapping("pet-shelter/volunteer")
 public class VolunteerController {
 
@@ -21,29 +19,6 @@ public class VolunteerController {
     public VolunteerController(VolunteerService volunteerService) {
         this.volunteerService = volunteerService;
     }
-
-    @PostMapping("/createVolunteer")
-    public Volunteer createVolunteer(@RequestBody Volunteer volunteer) {
-        return volunteerService.createVolunteer(volunteer);
-    }
-    @PutMapping("{volunteerId}")
-    public Volunteer updateVolunteer(@PathVariable long volunteerId,
-                            @RequestBody Volunteer volunteer) {
-        return volunteerService.updateVolunteer(volunteerId, volunteer);
-    }
-    @GetMapping("{volunteerId}")
-    public ResponseEntity<Volunteer> findVolunteer(@PathVariable long volunteerId) {
-        Volunteer findVolunteer = volunteerService.readVolunteer(volunteerId);
-        if (findVolunteer == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(findVolunteer);
-    }
-    @DeleteMapping("{volunteerId}")
-    public void deleteVolunteer(@PathVariable long volunteerId) {
-        volunteerService.deleteVolunteer(volunteerId);
-    }
-
 
     @Operation(
             summary = "Поиск волонтера по id",
@@ -59,9 +34,13 @@ public class VolunteerController {
             },
             tags = "Работа с волонтерами"
     )
-    @GetMapping("{id}")
-    public Volunteer getVolunteer(@Parameter(description = "id волонтера", example = "1") @PathVariable Integer id) {
-        return volunteerService.findVolunteer(id);
+    @GetMapping("{volunteerId}")
+    public ResponseEntity<Volunteer> readVolunteer(@PathVariable long volunteerId) {
+        Volunteer findVolunteer = volunteerService.read(volunteerId);
+        if (findVolunteer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(findVolunteer);
     }
 
     @Operation(
@@ -111,8 +90,9 @@ public class VolunteerController {
                     )
             )
     )
-    @PutMapping
-    public Volunteer editVolunteer(@RequestBody Volunteer volunteer) {
-        return volunteerService.editVolunteer(volunteer);
+    @PutMapping("{volunteerId}")
+    public Volunteer updateVolunteer(@PathVariable long volunteerId,
+                                   @RequestBody Volunteer volunteer) {
+        return volunteerService.updateVolunteer(volunteerId, volunteer);
     }
 }

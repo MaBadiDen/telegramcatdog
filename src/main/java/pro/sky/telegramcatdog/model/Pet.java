@@ -5,6 +5,7 @@ import pro.sky.telegramcatdog.constants.Color;
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.Sex;
 
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,17 @@ public class Pet {
     private PetType petType;
     private Color color;
     private Sex sex;
+    // to do: setup @ManyToOne linkage to Breed class when it is done
+    @ManyToOne
+    @JoinColumn(name = "breed_id")
+    private Breed breedId;
+    private byte[] picture;
+    @ManyToOne
+    @JoinColumn(name = "adopter_id")
+    private Adopter adopterId;
+
+    @OneToMany(mappedBy = "petId")
+    private Collection<AdoptionReport> adoptionReports;
 
     public Pet() {
 
@@ -56,6 +68,18 @@ public class Pet {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public Adopter getAdopterId() {
+        return adopterId;
+    }
+
+    public Breed getBreedId() {
+        return breedId;
+    }
+
+    public byte[] getPicture() {
+        return picture;
     }
 
     @Override
