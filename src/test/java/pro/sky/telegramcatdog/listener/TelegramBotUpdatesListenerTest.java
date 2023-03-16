@@ -139,18 +139,18 @@ class TelegramBotUpdatesListenerTest {
     @Test
     public void handleCallVolunteerChatIdTest() throws URISyntaxException, IOException {
         Long volunteerId = 1234567809L;
-        String userId = "1122334455";
+        String userId = "1234567809";
         Volunteer volunteer = new Volunteer(1, "Vasya", volunteerId, "https://t.me/vasyapupkin", null);
 
         when(volunteerRepository.findById(any(Long.class))).thenReturn(Optional.of(volunteer));
 
         String json = Files.readString(
-                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
-        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
         SendMessage actual = argumentCaptor.getValue();
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(volunteerId);
@@ -167,12 +167,12 @@ class TelegramBotUpdatesListenerTest {
         when(volunteerRepository.findById(any(Long.class))).thenReturn(Optional.of(volunteer));
 
         String json = Files.readString(
-                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update_with_username.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update_with_username.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
-        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
         SendMessage actual = argumentCaptor.getValue();
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(volunteerId);
@@ -182,15 +182,15 @@ class TelegramBotUpdatesListenerTest {
     /* Testing Call Volunteer method when no volunteers in the table (no volunteers defined). */
     @Test
     public void handleCallVolunteerWhenNoVolunteersTest() throws URISyntaxException, IOException {
-        Long userId = 1122334455L;
+        Long userId = 1234567809L;
 
         String json = Files.readString(
-                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT);
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_CALL_VOLUNTEER_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
-        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
         SendMessage actual = argumentCaptor.getValue();
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(userId);
