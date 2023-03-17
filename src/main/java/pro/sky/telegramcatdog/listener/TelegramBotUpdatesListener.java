@@ -397,7 +397,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             Adopter adopter = adopterRepository.findByChatId(chatId);
             if (adopter == null) {
-                adopter = new Adopter(firstName, lastName, phone1, chatId, username);
+                adopter = new Adopter(1, firstName, lastName, phone1, chatId, username);
                 adopterRepository.save(adopter);
                 SendMessage message = new SendMessage(chatId, SAVE_ADOPTER_SUCCESS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
                 sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
