@@ -99,6 +99,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     /**
+     * Creates buttons for the reply message to the shelter type selection (Stage 1)
+     * @return {@code InlineKeyboardMarkup}
+     */
+    private InlineKeyboardMarkup createButtonsStage1() {
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SHELTER_TEXT).callbackData(BUTTON_INFO_SHELTER_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SECURITY_TEXT).callbackData(BUTTON_INFO_SECURITY_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT).callbackData(BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT));
+        return inlineKeyboardMarkup;
+    }
+
+    /**
      * Process button clicks from user.
      *
      * @param update user input (can be text, button click, emoji, sticker, etc.)
@@ -189,6 +202,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(message);
     }
 
+
     /**
      * Processing request: General info about the shelter (stage 1)
      * @param chatId
@@ -196,6 +210,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private void processStage1Click(long chatId) {
 
         // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
+        SendMessage message = new SendMessage(chatId, STAGE_1_SHELTER_WELCOME_MSG_TEXT);
+        // Adding buttons
+        message.replyMarkup(createButtonsStage1());
+        sendMessage(message);
+
+
+
     }
 
     /**

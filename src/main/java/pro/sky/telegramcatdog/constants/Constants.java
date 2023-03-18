@@ -19,6 +19,7 @@ public class Constants {
     public final static String CONTACT_TELEGRAM_USERNAME_TEXT = "Пожалуйста свяжитесь с пользователем %s. Ему нужна помощь.";
     public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
     public final static String NO_VOLUNTEERS_TEXT = "На данный момент нет свободных волонтеров.";
+    public final static String STAGE_1_SHELTER_WELCOME_MSG_TEXT = "Выберете, какая именно информация вас интересует";
 
     // Buttons text
     public final static String BUTTON_CAT_SHELTER_TEXT = "Приют для кошек";
@@ -27,6 +28,13 @@ public class Constants {
     public final static String BUTTON_STAGE2_TEXT = "Как взять собаку из приюта (этап 2)";
     public final static String BUTTON_STAGE3_TEXT = "Прислать отчет о питомце (этап 3)";
     public final static String BUTTON_CALL_VOLUNTEER_TEXT = "Позвать волонтера";
+
+    public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
+
+    public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
+
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
+
 
     // Buttons callback text
     /**
@@ -41,6 +49,12 @@ public class Constants {
     public final static String BUTTON_STAGE2_CALLBACK_TEXT = "button_Stage2_clicked";
     public final static String BUTTON_STAGE3_CALLBACK_TEXT = "button_Stage3_clicked";
     public final static String BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT = "button_CallVolunteer_clicked";
+
+    public final static String BUTTON_INFO_SHELTER_CALLBACK_TEXT = "button_Info_Shelter_clicked";
+
+    public final static String BUTTON_INFO_SECURITY_CALLBACK_TEXT = "button_Info_Security_clicked";
+
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT = "button_Info_Safety_Precautions_clicked";
 
     // REST endpoint testing urls
     public final static String LOCALHOST_URL = "http://localhost:";
