@@ -365,7 +365,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         };
         SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
 
         sendMessage(message);
     }
