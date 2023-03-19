@@ -13,8 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -31,10 +33,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository) {
+    private final BranchParamsRepository branchParamsRepository;
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
+        this.branchParamsRepository = branchParamsRepository;
     }
 
     @PostConstruct
@@ -138,6 +143,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
                 processStage1Click(chatId);
 
+            } else if (callbackQuery.data().equals(BUTTON_INFO_SHELTER_CALLBACK_TEXT)) {
+                //
+                sendButtonClickMessage(chatId,BUTTON_INFO_SHELTER_CALLBACK_TEXT);
+                processGettingInfoShelter();
+
+
+            } else if (callbackQuery.data().equals(BUTTON_INFO_SECURITY_CALLBACK_TEXT)) {
+                //Information for providing a car pass
+                sendButtonClickMessage(chatId, BUTTON_INFO_SECURITY_CALLBACK_TEXT);
+                processGettingSecurityData(chatId);
+
+            } else if (callbackQuery.data().equals(BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT)) {
+                //Safety information
+                sendButtonClickMessage(chatId,BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
+                processGettingInformationAboutSafetyRules(chatId);
+
             } else if (callbackQuery.data().equals(BUTTON_STAGE2_CALLBACK_TEXT)) {
                 // How to adopt a dog/cat (stage 2)
                 sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
@@ -208,15 +229,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      * @param chatId
      */
     private void processStage1Click(long chatId) {
-
         // to do (Olga): Implement Stage 1 button click functionality (welcome message, buttons)
         SendMessage message = new SendMessage(chatId, STAGE_1_SHELTER_WELCOME_MSG_TEXT);
         // Adding buttons
         message.replyMarkup(createButtonsStage1());
         sendMessage(message);
-
-
-
     }
 
     /**
@@ -288,4 +305,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             guestRepository.save(guest);
         }
     }
+
+    private void processGettingInformationAboutSafetyRules(long chatId) {
+        SendMessage message = new SendMessage(chatId, INFO_SAFETY_PRECAUTIONS_TEXT);
+        sendMessage(message);
+    }
+
+    private void processGettingSecurityData(long chatId) {
+        SendMessage message = new SendMessage(chatId, SECURITY_CONTACT_DETAILS);
+        sendMessage(message);
+    }
+
+    private void processGettingInfoShelter() {
+
+    }
+
 }

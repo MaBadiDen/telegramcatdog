@@ -20,6 +20,15 @@ public class Constants {
     public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
     public final static String NO_VOLUNTEERS_TEXT = "На данный момент нет свободных волонтеров.";
     public final static String STAGE_1_SHELTER_WELCOME_MSG_TEXT = "Выберете, какая именно информация вас интересует";
+    public final static String INFO_SAFETY_PRECAUTIONS_TEXT = "При первичном посещении Приюта, в целях безопасности, гостю запрещается без сопровождения ответственного рабочего по уходу за животными:\n" +
+            "\n" +
+            "заходить в вольеры с животными;\n" +
+            "кормить и гладить животных;\n" +
+            "выпускать животных из вольеров;\n" +
+            "выходить с животными за территорию приюта.";
+
+    public final static String SECURITY_CONTACT_DETAILS = "Для получения пропуска на машину, свяжитесь с нашей охраной по телефону:\n"+
+            "+7998887755";
 
     // Buttons text
     public final static String BUTTON_CAT_SHELTER_TEXT = "Приют для кошек";
@@ -34,6 +43,8 @@ public class Constants {
     public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
 
     public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
+
+
 
 
     // Buttons callback text
