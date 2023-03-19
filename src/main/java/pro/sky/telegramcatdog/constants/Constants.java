@@ -41,6 +41,9 @@ public class Constants {
     public final static String BUTTON_SHARE_CONTACT_DETAILS_TEXT = "Оставить свои контактные данные";
     public final static String BUTTON_REPORT_TEMPLATE_TEXT = "Форма ежедневного отчета";
     public final static String BUTTON_SEND_REPORT_TEXT = "Послать отчет";
+    public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
+    public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
 
     // Buttons callback text
     public final static String BUTTON_CAT_SHELTER_CALLBACK_TEXT = "button_Cat_Shelter_clicked";
@@ -52,6 +55,12 @@ public class Constants {
     public final static String BUTTON_SHARE_CONTACT_CALLBACK_TEXT = "button_ShareContact_clicked";
     public final static String BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT = "button_ReportTemplate_clicked";
     public final static String BUTTON_SEND_REPORT_CALLBACK_TEXT = "button_SendReport_clicked";
+    public final static String BUTTON_INFO_SHELTER_CALLBACK_TEXT = "button_info_shelter_clicked";
+    public final static String BUTTON_INFO_SECURITY_CALLBACK_TEXT = "button_info_security_clicked";
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT ="button_info_safety_precautions_clicked";
+
+
+
 
     // REST endpoint testing urls
     public final static String LOCALHOST_URL = "http://localhost:";

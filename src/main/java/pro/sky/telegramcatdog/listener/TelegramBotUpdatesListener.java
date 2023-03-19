@@ -19,10 +19,14 @@ import pro.sky.telegramcatdog.model.Adopter;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.repository.AdopterRepository;
+import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -35,12 +39,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
+    private final BranchParamsRepository branchParamsRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository,BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
+        this.branchParamsRepository = branchParamsRepository;
     }
 
     @PostConstruct
@@ -96,6 +102,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private InlineKeyboardMarkup createButtonsStage1() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SHELTER_TEXT).callbackData(BUTTON_INFO_SHELTER_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SECURITY_TEXT).callbackData(BUTTON_INFO_SECURITY_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT).callbackData(BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT));
 
         // todo (Olga): Add more buttons here
 
@@ -203,6 +212,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     // Share your contact details
                     sendButtonClickMessage(chatId, BUTTON_SHARE_CONTACT_CALLBACK_TEXT);
                     shareContact(update);
+                    break;
+                case  BUTTON_INFO_SHELTER_CALLBACK_TEXT:
+                        //Safety information
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SHELTER_CALLBACK_TEXT);
+                    processGettingInformationAboutShelter(chatId);
+                    break;
+                case BUTTON_INFO_SECURITY_CALLBACK_TEXT:
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SECURITY_CALLBACK_TEXT);
+                    processGettingInformationAboutSecurity(chatId);
+                    break;
+                case BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT:
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
+                    processGettingInformationAboutSafetyPrecautions(chatId);
                     break;
 
                 // todo (Olga, Denis, Tamerlan): process more button clicks here
@@ -405,6 +427,51 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 SendMessage message = new SendMessage(chatId, ADOPTER_ALREADY_EXISTS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
                 sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
             }
+        }
+    }
+    private void processGettingInformationAboutShelter(long chatId){
+        if(shelterType == null) {
+            return;
+        } if (shelterType == PetType.CAT){
+        String messageText = branchParamsRepository.findById(1).orElse(null).getWorkHours();
+        SendMessage message = new SendMessage(chatId, messageText);
+        message.replyMarkup(createButtonsStage1());
+        sendMessage(message);
+    } else {
+            String messageText = branchParamsRepository.findById(2).orElse(null).getWorkHours();
+            SendMessage message = new SendMessage(chatId, messageText);
+            message.replyMarkup(createButtonsStage1());
+            sendMessage(message);
+        }
+    }
+    private void processGettingInformationAboutSecurity(long chatId){
+        if(shelterType == null) {
+            return;
+        } if (shelterType == PetType.CAT) {
+        String messageText = branchParamsRepository.findById(1).orElse(null).getWorkHours();
+            SendMessage message = new SendMessage(chatId, messageText);
+            message.replyMarkup(createButtonsStage1());
+            sendMessage(message);
+    } else {
+            String messageText = branchParamsRepository.findById(2).orElse(null).getSecurityContact();
+            SendMessage message = new SendMessage(chatId, messageText);
+            message.replyMarkup(createButtonsStage1());
+            sendMessage(message);
+        }
+    }
+    private void processGettingInformationAboutSafetyPrecautions(long chatId){
+        if(shelterType == null) {
+            return;
+        } if (shelterType == PetType.CAT) {
+        String messageText = branchParamsRepository.findById(1).orElse(null).getSecurityInfo();
+        SendMessage message = new SendMessage(chatId, messageText);
+        message.replyMarkup(createButtonsStage1());
+        sendMessage(message);
+    } else {
+            String messageText = branchParamsRepository.findById(2).orElse(null).getSecurityInfo();
+            SendMessage message = new SendMessage(chatId, messageText);
+            message.replyMarkup(createButtonsStage1());
+            sendMessage(message);
         }
     }
 }
