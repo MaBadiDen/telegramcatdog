@@ -109,7 +109,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return inlineKeyboardMarkup;
     }
 
-    private InlineKeyboardMarkup createButtonsStage2(PetType shelterType) {
+    private InlineKeyboardMarkup createButtonsStage2() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(3).orElse(null).getShortDesc()).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
@@ -380,7 +380,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         };
         SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -390,7 +390,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(3).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -400,7 +400,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(4).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -410,7 +410,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(5).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -420,7 +420,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(6).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -430,7 +430,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(7).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -440,7 +440,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(8).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -450,7 +450,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(9).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -460,7 +460,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(10).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2(shelterType));
+        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
