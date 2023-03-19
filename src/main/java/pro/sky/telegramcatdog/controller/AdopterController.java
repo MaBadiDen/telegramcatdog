@@ -11,7 +11,7 @@ import pro.sky.telegramcatdog.model.Adopter;
 import pro.sky.telegramcatdog.service.AdopterService;
 
 @RestController
-@RequestMapping("pet-shelter/adopters")
+@RequestMapping("pet-shelter/adopter")
 public class AdopterController {
     private final AdopterService adopterService;
 
