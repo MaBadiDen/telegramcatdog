@@ -5,4 +5,5 @@ import pro.sky.telegramcatdog.model.Adopter;
 
 public interface AdopterRepository extends JpaRepository<Adopter, Long> {
     public Adopter findByChatId(long chatId);
+
 }

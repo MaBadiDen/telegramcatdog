@@ -25,16 +25,13 @@ public class AdoptionReport {
     private String wellBeing;
     private String behaviorChange;
 
-    public AdoptionReport() {
-    }
 
-    public AdoptionReport(Long id, byte[] picture, String diet, String wellBeing, String behaviorChange) {
-        this.id = id;
-
+    public AdoptionReport(byte[] picture, String diet, String wellBeing, String behaviorChange,  LocalDateTime reportDate) {
         this.picture = picture;
         this.diet = diet;
         this.wellBeing = wellBeing;
         this.behaviorChange = behaviorChange;
+        this.reportDate = reportDate;
     }
 
     @Override

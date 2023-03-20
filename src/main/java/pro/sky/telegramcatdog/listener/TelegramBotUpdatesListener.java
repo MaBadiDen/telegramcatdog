@@ -3,26 +3,35 @@ package pro.sky.telegramcatdog.listener;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.CallbackQuery;
+import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.model.Adopter;
+import pro.sky.telegramcatdog.model.AdoptionReport;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.repository.AdopterRepository;
+import pro.sky.telegramcatdog.repository.AdoptionReportRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -35,12 +44,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
+    private final AdoptionReportRepository adoptionReportRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionReportRepository adoptionReportRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
+        this.adoptionReportRepository = adoptionReportRepository;
     }
 
     @PostConstruct
@@ -57,6 +68,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             if (update.message() != null) {
                 processMessage(update);
             }
+            // Process button clicks
             else {
                 processButtonClick(update);
             }
@@ -91,6 +103,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE1_TEXT).callbackData(BUTTON_STAGE1_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE2_TEXT).callbackData(BUTTON_STAGE2_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_STAGE3_TEXT).callbackData(BUTTON_STAGE3_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT).callbackData(BUTTON_CALL_VOLUNTEER_CALLBACK_TEXT));
         return inlineKeyboardMarkup;
     }
 
@@ -127,6 +140,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return replyKeyboardMarkup;
     }
 
+
     private ReplyKeyboardMarkup createMainMenuKeyboardButtons() {
         KeyboardButton keyboardButton1 = new KeyboardButton(BUTTON_MAIN_MENU_TEXT);
         KeyboardButton keyboardButton2 = new KeyboardButton(BUTTON_CALL_VOLUNTEER_TEXT);
@@ -147,6 +161,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             saveAdopter(update);
             return;
         }
+
+        if (update.message().photo() != null) {
+            saveAdoptionReport(update);
+            return;
+        }
+
         if (update.message().text() == null) {
             // For stickers incomeMsgText is null
             return;
@@ -198,6 +218,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     // Send a follow-up report (stage 3)
                     sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
                     processStage3Click(chatId);
+                case BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT:
+                    sendButtonClickMessage(chatId, "инструкция");
+                    break;
+                case BUTTON_SEND_REPORT_CALLBACK_TEXT:
+                    sendButtonClickMessage(chatId, "отправьте фото");
                     break;
                 case BUTTON_SHARE_CONTACT_CALLBACK_TEXT:
                     // Share your contact details
@@ -333,6 +358,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         // Adding buttons
         message.replyMarkup(createButtonsStage3());
         sendMessage(message);
+
+
+
+
     }
 
     /**
@@ -394,7 +423,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             String phone1 = update.message().contact().phoneNumber();
             String username = update.message().chat().username();
             long chatId = update.message().chat().id();
-
             Adopter adopter = adopterRepository.findByChatId(chatId);
             if (adopter == null) {
                 adopter = new Adopter(firstName, lastName, phone1, chatId, username);
@@ -406,5 +434,53 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
             }
         }
+    }
+
+    private void saveAdoptionReport(Update update) {
+        long chatId = update.message().chat().id();
+        String diet = "diet";
+        String wellBeing = "wellBeing";
+        String behaviorChange = "behaviorChange";
+        Adopter adopterId =  adopterRepository.findByChatId(chatId);
+        if (update.message().photo() != null) {
+            byte[] image = getPhoto(update);
+            LocalDateTime photoSendingTime = LocalDateTime.now();
+            AdoptionReport adoptionReport = new AdoptionReport(image, diet, wellBeing, behaviorChange, photoSendingTime );
+            adoptionReport.setAdopterId(adopterId);
+            adoptionReportRepository.save(adoptionReport);
+            long id = adoptionReport.getId();
+            SendMessage message = new SendMessage(chatId, "фото сохранено, переходите на следующий шаг");
+            sendMessage(message);
+        }
+        else {
+            String firstMessageText = update.message().text();
+            LocalDateTime firstMessageTextTime = LocalDateTime.now();
+            AdoptionReport adoptionReport = adoptionReportRepository.findByReportDate_Date(firstMessageTextTime);
+            if (adoptionReport.getReportDate().getDayOfYear() == firstMessageTextTime.getDayOfYear()) {
+
+            }
+        }
+
+    }
+
+    public byte[] getPhoto(Update update) {
+        if (update.message().photo() != null) {
+            PhotoSize[] photoSizes = update.message().photo();
+            for (PhotoSize photoSize: photoSizes) {
+                GetFile getFile = new GetFile(photoSize.fileId());
+                GetFileResponse getFileResponse = telegramBot.execute(getFile);
+                if (getFileResponse.isOk()) {
+                    File file = getFileResponse.file();
+                    String extension = StringUtils.getFilenameExtension(file.filePath());
+                    try {
+                        byte[] image = telegramBot.getFileContent(file);
+                        return image;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
