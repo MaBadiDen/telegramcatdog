@@ -12,7 +12,7 @@ import pro.sky.telegramcatdog.model.AdoptionDoc;
 import pro.sky.telegramcatdog.service.AdoptionDocService;
 
 @RestController
-@RequestMapping("pet-shelter/docs")
+@RequestMapping("pet-shelter/doc")
 public class AdoptionDocController {
     private final AdoptionDocService adoptionDocService;
 
@@ -36,7 +36,7 @@ public class AdoptionDocController {
             tags = "Работа с документами"
     )
     @GetMapping("{id}")
-    public AdoptionDoc readAdoptionDocById(@Parameter(description = "id документа", example = "42") @PathVariable Long id) {
+    public AdoptionDoc readAdoptionDocById(@Parameter(description = "id документа", example = "42") @PathVariable int id) {
         return adoptionDocService.readAdoptionDoc(id);
     }
 
