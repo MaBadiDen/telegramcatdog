@@ -13,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.model.Adopter;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.AdopterRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -44,6 +46,9 @@ class TelegramBotUpdatesListenerTest {
 
     @Mock
     private GuestRepository guestRepository;
+
+    @Mock
+    private AdopterRepository adopterRepository;
 
     /* Testing '/start' command when it is a new guest (unknown guest). */
     @Test
@@ -195,6 +200,61 @@ class TelegramBotUpdatesListenerTest {
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(userId);
         Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(NO_VOLUNTEERS_TEXT);
+    }
+
+    /* Testing Share Contact button when it already exists in our database. */
+    @Test
+    public void handleShareContactWhenItAlreadyExists() throws URISyntaxException, IOException {
+        Long chatId = 1122334455L;
+        Adopter adopter = new Adopter("Vasya", "Pupkin", "+79101234567", 1122334455, "@vasya_pupkin");
+
+        when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("contact_update.json").toURI()));
+        Update update = getUpdateMessage(json, "");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(chatId);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(ADOPTER_ALREADY_EXISTS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
+    }
+
+    /* Testing Share Contact button when it is new contact (do not exist in our database). */
+    @Test
+    public void handleShareContactWhenItDoNotExist() throws URISyntaxException, IOException {
+        Long chatId = 1122334455L;
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("contact_update.json").toURI()));
+        Update update = getUpdateMessage(json, "");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(chatId);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(SAVE_ADOPTER_SUCCESS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
+    }
+
+    /* Testing Share Contact Details button. */
+    @Test
+    public void handleShareContactDetails() throws URISyntaxException, IOException {
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_SHARE_CONTACT_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1122334455L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(SHARE_CONTACT_MSG_TEXT);
     }
 
     private Update getUpdateMessage(String json, String replaced) {
