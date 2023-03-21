@@ -21,6 +21,16 @@ import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
+import pro.sky.telegramcatdog.model.Adopter;
+import pro.sky.telegramcatdog.model.AdoptionDoc;
+import pro.sky.telegramcatdog.model.BranchParams;
+import pro.sky.telegramcatdog.model.Guest;
+import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.repository.AdopterRepository;
+import pro.sky.telegramcatdog.repository.AdoptionDocRepository;
+import pro.sky.telegramcatdog.repository.BranchParamsRepository;
+import pro.sky.telegramcatdog.repository.GuestRepository;
+import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -41,13 +51,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final AdopterRepository adopterRepository;
     private final AdoptionDocRepository adoptionDocRepository;
     private final AdoptionReportRepository adoptionReportRepository;
+    private final BranchParamsRepository branchParamsRepository;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,
                                       AdoptionReportRepository adoptionReportRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
+        this.branchParamsRepository = branchParamsRepository;
         this.adoptionDocRepository = adoptionDocRepository;
         this.adoptionReportRepository = adoptionReportRepository;
     }
@@ -105,9 +118,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private InlineKeyboardMarkup createButtonsStage1() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
-        // todo (Olga): Add more buttons here
-
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SHELTER_TEXT).callbackData(BUTTON_INFO_SHELTER_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SECURITY_TEXT).callbackData(BUTTON_INFO_SECURITY_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT).callbackData(BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_SHARE_CONTACT_DETAILS_TEXT).callbackData(BUTTON_SHARE_CONTACT_CALLBACK_TEXT));
         return inlineKeyboardMarkup;
     }
@@ -117,7 +130,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(3).orElse(null).getShortDesc()).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(4).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5L).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(6).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(7).orElse(null).getShortDesc()).callbackData(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT));
         if(shelterType.equals(PetType.DOG)) {
@@ -250,6 +263,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     // Share your contact details
                     sendButtonClickMessage(chatId, BUTTON_SHARE_CONTACT_CALLBACK_TEXT);
                     shareContact(update);
+                    break;
+                case BUTTON_INFO_SHELTER_CALLBACK_TEXT:
+                    // Safety information
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SHELTER_CALLBACK_TEXT);
+                    processGettingInformationAboutShelter(chatId);
+                    break;
+                case BUTTON_INFO_SECURITY_CALLBACK_TEXT:
+                    // Obtaining security contacts
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SECURITY_CALLBACK_TEXT);
+                    processGettingInformationAboutSecurity(chatId);
+                    break;
+                case BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT:
+                    // Obtaining Safety Instructions
+                    sendButtonClickMessage(chatId,BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
+                    processGettingInformationAboutSafetyPrecautions(chatId);
                     break;
                 case BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT:
                     // Instruction how to meet animal first time
@@ -652,25 +680,62 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             adoptionReportRepository.save(adoptionReport);
         }
     }
-
-    public byte[] getPhoto(Update update) {
-        if (update.message().photo() != null) {
-            PhotoSize[] photoSizes = update.message().photo();
-            for (PhotoSize photoSize: photoSizes) {
-                GetFile getFile = new GetFile(photoSize.fileId());
-                GetFileResponse getFileResponse = telegramBot.execute(getFile);
-                if (getFileResponse.isOk()) {
-                    File file = getFileResponse.file();
-                    String extension = StringUtils.getFilenameExtension(file.filePath());
-                    try {
-                        byte[] image = telegramBot.getFileContent(file);
-                        return image;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
+    private void processGettingInformationAboutShelter(long chatId){
+        if (shelterType == null) {
+            return;
         }
-        return null;
+        StringBuilder messageText = new StringBuilder();
+        switch (shelterType) {
+            case DOG:
+                BranchParams dogParams = branchParamsRepository.findById(1).orElse(null);
+                if (dogParams != null) {
+                    messageText.append("Часы работы: ").append(dogParams.getWorkHours()).append("\n");
+                    messageText.append("Адрес: ").append(dogParams.getAddress()).append("\n");
+                }
+                break;
+            case CAT:
+                BranchParams catParams = branchParamsRepository.findById(2).orElse(null);
+                if (catParams != null) {
+                    messageText.append("Часы работы: ").append(catParams.getWorkHours()).append("\n");
+                    messageText.append("Адрес: ").append(catParams.getAddress()).append("\n");
+                }
+                break;
+        }
+        SendMessage message = new SendMessage(chatId, messageText.toString());
+        sendMessage(message);
     }
-}
+    private void processGettingInformationAboutSecurity(long chatId){
+        if (shelterType == null) {
+            return;
+        }
+        String messageText = null;
+        switch (shelterType) {
+            case DOG:
+                messageText = branchParamsRepository.findById(1).orElse(null).getSecurityContact();
+                break;
+            case CAT:
+                messageText = branchParamsRepository.findById(2).orElse(null).getSecurityContact();
+                break;
+        }
+        SendMessage message = new SendMessage(chatId, messageText);
+        sendMessage(message);
+    }
+    private void processGettingInformationAboutSafetyPrecautions(long chatId){
+        if (shelterType == null) {
+            return;
+        }
+        String messageText = null;
+        switch (shelterType) {
+            case DOG:
+                messageText = branchParamsRepository.findById(1).orElse(null).getSecurityInfo();
+                break;
+            case CAT:
+                messageText = branchParamsRepository.findById(2).orElse(null).getSecurityInfo();
+                break;
+        }
+        SendMessage message = new SendMessage(chatId, messageText);
+        sendMessage(message);
+
+        }
+    }
+

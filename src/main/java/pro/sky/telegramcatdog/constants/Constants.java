@@ -1,5 +1,6 @@
 package pro.sky.telegramcatdog.constants;
 
+import com.pengrad.telegrambot.model.CallbackQuery;
 import com.vdurmont.emoji.EmojiParser;
 
 public class Constants {
@@ -45,6 +46,9 @@ public class Constants {
     public final static String BUTTON_SEND_REPORT_TEXT = "Послать отчет";
     public final static String BUTTON_RULES_MEETING_ANIMAL_TEXT = "Правила знакомства с животным";
     public final static String BUTTON_DOCS_FOR_ADOPTION_TEXT = "Документы для усыновления";
+    public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
+    public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
 
     // Buttons callback text
     public final static String BUTTON_CAT_SHELTER_CALLBACK_TEXT = "button_Cat_Shelter_clicked";
@@ -65,6 +69,12 @@ public class Constants {
     public final static String BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT = "button_advicesFromKinolog_clicked";
     public final static String BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT = "button_recommendedKinologs_clicked";
     public final static String BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT = "button_reasonsRefusal_clicked";
+    public final static String BUTTON_INFO_SHELTER_CALLBACK_TEXT = "button_Info_Shelter_clicked";
+    public final static String BUTTON_INFO_SECURITY_CALLBACK_TEXT = "button_Info_Security_clicked";
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT ="button_Info_Safety_Precautions_clicked";
+
+
+
 
     // REST endpoint testing urls
     public final static String LOCALHOST_URL = "http://localhost:";
