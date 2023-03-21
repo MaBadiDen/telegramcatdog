@@ -9,7 +9,7 @@ import java.util.Objects;
 public class AdoptionDoc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
     @Column(name = "short_desc")
     private String shortDesc;
     private String description;
@@ -17,7 +17,7 @@ public class AdoptionDoc {
     public AdoptionDoc() {
     }
 
-    public AdoptionDoc(long id, String shortDesc, String description) {
+    public AdoptionDoc(int id, String shortDesc, String description) {
         this.id = id;
         this.shortDesc = shortDesc;
         this.description = description;
@@ -36,11 +36,11 @@ public class AdoptionDoc {
         return Objects.hash(id);
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

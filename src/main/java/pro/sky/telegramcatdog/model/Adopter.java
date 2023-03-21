@@ -29,7 +29,8 @@ public class Adopter {
     @OneToMany(mappedBy = "adopterId")
     private Collection<Pet> pets;
 
-    public Adopter(String firstName, String lastName, String phone1, long chatId, String username) {
+    public Adopter(long id, String firstName, String lastName, String phone1, long chatId, String username) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone1 = phone1;

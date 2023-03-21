@@ -28,6 +28,8 @@ public class Constants {
     public final static String SAVE_ADOPTER_SUCCESS_TEXT = "Мы записали ваши контактные данные.";
     public final static String ADOPTER_ALREADY_EXISTS_TEXT = "У нас уже есть ваши контактные данные.";
     public final static String WE_WILL_CALL_YOU_TEXT = "Скоро с вами свяжется наш волонтер.";
+    public final static String RULES_HOW_TO_MEET_ANIMAL_DOG = "Скоро добавим информацию по собакам";
+    public final static String RULES_HOW_TO_MEET_ANIMAL_CAT = "Скоро добавим информацию по кошкам";
 
     // Buttons text
     public final static String BUTTON_CAT_SHELTER_TEXT = "Приют для кошек";
@@ -41,6 +43,8 @@ public class Constants {
     public final static String BUTTON_SHARE_CONTACT_DETAILS_TEXT = "Оставить свои контактные данные";
     public final static String BUTTON_REPORT_TEMPLATE_TEXT = "Форма ежедневного отчета";
     public final static String BUTTON_SEND_REPORT_TEXT = "Послать отчет";
+    public final static String BUTTON_RULES_MEETING_ANIMAL_TEXT = "Правила знакомства с животным";
+    public final static String BUTTON_DOCS_FOR_ADOPTION_TEXT = "Документы для усыновления";
     public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
     public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
     public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
@@ -55,6 +59,15 @@ public class Constants {
     public final static String BUTTON_SHARE_CONTACT_CALLBACK_TEXT = "button_ShareContact_clicked";
     public final static String BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT = "button_ReportTemplate_clicked";
     public final static String BUTTON_SEND_REPORT_CALLBACK_TEXT = "button_SendReport_clicked";
+    public final static String BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT = "button_rulesMeetingAnimal_clicked";
+    public final static String BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT = "button_docsForAdoption_clicked";
+    public final static String BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT = "button_recForTransport_clicked";
+    public final static String BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT = "button_arrangForLittle_clicked";
+    public final static String BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT = "button_arrangForAdult_clicked";
+    public final static String BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT = "button_advicesForDisable_clicked";
+    public final static String BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT = "button_advicesFromKinolog_clicked";
+    public final static String BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT = "button_recommendedKinologs_clicked";
+    public final static String BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT = "button_reasonsRefusal_clicked";
     public final static String BUTTON_INFO_SHELTER_CALLBACK_TEXT = "button_Info_Shelter_clicked";
     public final static String BUTTON_INFO_SECURITY_CALLBACK_TEXT = "button_Info_Security_clicked";
     public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT ="button_Info_Safety_Precautions_clicked";
@@ -69,7 +82,9 @@ public class Constants {
     public final static String VOLUNTEER_URL = "/pet-shelter/volunteer";
     public final static String BREED_URL = "/pet-shelter/breed";
     public final static String ADOPTION_REPORT_URL = "/pet-shelter/adoptionReport";
+    public final static String ADOPTIONDOC_URL = "/pet-shelter/doc";
+    public final static String ADOPTER_URL = "/pet-shelter/adopter";
 
-    public final static String ADOPTIONDOC_URL = "/pet-shelter/docs";
+
 
 }

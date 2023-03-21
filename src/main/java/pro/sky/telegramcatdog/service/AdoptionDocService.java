@@ -18,7 +18,7 @@ public class AdoptionDocService {
         return adoptionDocRepository.save(adoptionDoc);
     }
 
-    public AdoptionDoc readAdoptionDoc(long id) {
+    public AdoptionDoc readAdoptionDoc(int id) {
         AdoptionDoc adoptionDoc = adoptionDocRepository.findById(id).orElse(null);
         if (adoptionDoc == null) {
             throw new AdoptionDocNotFoundException(id);

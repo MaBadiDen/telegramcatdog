@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import pro.sky.telegramcatdog.model.AdoptionDoc;
 
 @Repository
-public interface AdoptionDocRepository extends JpaRepository<AdoptionDoc, Long> {
+public interface AdoptionDocRepository extends JpaRepository<AdoptionDoc, Integer> {
 }
