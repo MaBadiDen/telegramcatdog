@@ -29,7 +29,7 @@ public class AdoptionReportService {
         logger.debug("Calling method update AdoptionReport (id = {})", adoptionReport.getId());
         AdoptionReport oldVoAdoptionReport = readAdoptionReport(id);
         oldVoAdoptionReport.setAdopterId(adoptionReport.getAdopterId());
-        oldVoAdoptionReport.setReportDate(adoptionReport.getReportDate());
+       // oldVoAdoptionReport.setReportDate(adoptionReport.getReportDate());
         oldVoAdoptionReport.setPetId(adoptionReport.getPetId());
         oldVoAdoptionReport.setPicture(adoptionReport.getPicture());
         oldVoAdoptionReport.setDiet(adoptionReport.getDiet());
@@ -37,12 +37,4 @@ public class AdoptionReportService {
         oldVoAdoptionReport.setBehaviorChange(adoptionReport.getBehaviorChange());
         return adoptionReportRepository.save(oldVoAdoptionReport);
     }
-    public AdoptionReport deleteAdoptionReport(long id) {
-        logger.debug("Calling method delete AdoptionReport (Id = {})", id);
-        AdoptionReport adoptionReport = readAdoptionReport(id);
-        adoptionReportRepository.deleteById(id);
-        return adoptionReport;
-    }
-
-
 }

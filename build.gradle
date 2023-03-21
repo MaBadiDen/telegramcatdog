@@ -18,10 +18,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.github.pengrad:java-telegram-bot-api:6.3.0'
 	implementation 'com.vdurmont:emoji-java:3.2.0'
-	implementation group: 'org.postgresql', name: 'postgresql', version: '42.5.4'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.0.3'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.0'
-
+	implementation 'org.postgresql:postgresql:42.5.1'
+	implementation 'com.h2database:h2'
+	implementation 'org.liquibase:liquibase-core'
+	// 2023/02/26, Alex: to avoid NoProviderFoundException during application start
+	implementation 'org.hibernate:hibernate-validator:6.0.13.Final'
+	implementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
 
 tasks.named('test') {

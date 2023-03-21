@@ -1,27 +1,37 @@
 package pro.sky.telegramcatdog.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "adoption_reports")
 public class AdoptionReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private Long adopterId;
+    @ManyToOne
+    @JoinColumn(name = "adopter_id")
+    private Adopter adopterId;
     private LocalDateTime reportDate;
-    private Integer petId;
+    @ManyToOne
+    @JoinColumn(name = "pet_id")
+    private Pet petId;
     private byte[] picture;
     private String diet;
+    @Column(name = "wellbeing")
     private String wellBeing;
-    private String behaviorChange ;
+    private String behaviorChange;
 
-    public AdoptionReport() {
+
+    public AdoptionReport(byte[] picture, String diet, String wellBeing, String behaviorChange,  LocalDateTime reportDate) {
+        this.picture = picture;
+        this.diet = diet;
+        this.wellBeing = wellBeing;
+        this.behaviorChange = behaviorChange;
+        this.reportDate = reportDate;
     }
 
     @Override
@@ -45,11 +55,11 @@ public class AdoptionReport {
         this.id = id;
     }
 
-    public Long getAdopterId() {
+    public Adopter getAdopterId() {
         return adopterId;
     }
 
-    public void setAdopterId(Long adopterId) {
+    public void setAdopterId(Adopter adopterId) {
         this.adopterId = adopterId;
     }
 
@@ -61,11 +71,11 @@ public class AdoptionReport {
         this.reportDate = reportDate;
     }
 
-    public Integer getPetId() {
+    public Pet getPetId() {
         return petId;
     }
 
-    public void setPetId(Integer petId) {
+    public void setPetId(Pet petId) {
         this.petId = petId;
     }
 
@@ -101,3 +111,5 @@ public class AdoptionReport {
         this.behaviorChange = behaviorChange;
     }
 }
+
+
