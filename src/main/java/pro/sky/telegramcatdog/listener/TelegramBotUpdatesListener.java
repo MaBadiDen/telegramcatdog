@@ -182,21 +182,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
             return;
         }
-        if (update.message().text() != null && updateStatus == UpdateStatus.WAITING_FOR_PET_DIET) {
-            saveAdoptionReportDiet(update);
-            updateStatus = UpdateStatus.WAITING_FOR_WELL_BEING;
-            return;
+        if (update.message().text() != null)  {
+            switch (updateStatus) {
+                case WAITING_FOR_PET_DIET:
+                    saveAdoptionReportDiet(update);
+                    updateStatus = UpdateStatus.WAITING_FOR_WELL_BEING;
+                    break;
+                case WAITING_FOR_WELL_BEING:
+                    saveAdoptionReportWellBeing(update);
+                    updateStatus = UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE;
+                    break;
+                case WAITING_FOR_BEHAVIOR_CHANGE:
+                    saveAdoptionReportBehaviorChange(update);
+                    updateStatus = UpdateStatus.DEFAULT;
+                    break;
+            }
         }
-        if (update.message().text() != null && updateStatus == UpdateStatus.WAITING_FOR_WELL_BEING) {
-            saveAdoptionReportWellBeing(update);
-            updateStatus = UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE;
-            return;
-        }
-        if (update.message().text() != null && updateStatus == UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE) {
-            saveAdoptionReportBehaviorChange(update);
-            updateStatus = UpdateStatus.DEFAULT;
-            return;
-        }
+
         switch (update.message().text()) {
             case "/start", BUTTON_MAIN_MENU_TEXT:
                 processStartCommand(update);
@@ -626,10 +628,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             adoptionReport = new AdoptionReport(adopterId, date, null, "diet", "bring", "change");
             adoptionReportRepository.save(adoptionReport);
         }
-        else {
-            SendMessage message =  new SendMessage(chatId, "отчет на сегодня уже сделан");
-            sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
-        }
+
     }
 
     private void saveAdoptionReportPhoto(Update update) {
