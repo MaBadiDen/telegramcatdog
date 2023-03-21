@@ -7,7 +7,6 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
@@ -22,7 +21,6 @@ import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
 import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.AdoptionDoc;
 import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
@@ -53,16 +51,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final AdoptionReportRepository adoptionReportRepository;
     private final BranchParamsRepository branchParamsRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,
-                                      AdoptionReportRepository adoptionReportRepository) {
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,BranchParamsRepository branchParamsRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
-        this.branchParamsRepository = branchParamsRepository;
         this.adoptionDocRepository = adoptionDocRepository;
         this.adoptionReportRepository = adoptionReportRepository;
+        this.branchParamsRepository = branchParamsRepository;
     }
 
     @PostConstruct
@@ -130,7 +126,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(3).orElse(null).getShortDesc()).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(4).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5L).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(6).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(7).orElse(null).getShortDesc()).callbackData(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT));
         if(shelterType.equals(PetType.DOG)) {
@@ -737,5 +733,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(message);
 
         }
+    public byte[] getPhoto(Update update) {
+        if (update.message().photo() != null) {
+            PhotoSize[] photoSizes = update.message().photo();
+            for (PhotoSize photoSize: photoSizes) {
+                GetFile getFile = new GetFile(photoSize.fileId());
+                GetFileResponse getFileResponse = telegramBot.execute(getFile);
+                if (getFileResponse.isOk()) {
+                    File file = getFileResponse.file();
+                    String extension = StringUtils.getFilenameExtension(file.filePath());
+                    try {
+                        byte[] image = telegramBot.getFileContent(file);
+                        return image;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return null;
     }
+}
 
