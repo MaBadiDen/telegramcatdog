@@ -1,5 +1,6 @@
 package pro.sky.telegramcatdog.constants;
 
+import com.pengrad.telegrambot.model.CallbackQuery;
 import com.vdurmont.emoji.EmojiParser;
 
 public class Constants {
