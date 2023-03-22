@@ -49,6 +49,14 @@ public class Constants {
     public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
     public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
     public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
+    public final static String BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_TEXT = "Рекомендации по транспортировке животного";
+    public final static String BUTTON_ARRANGEMENAT_FOR_LITTLE_TEXT = "Рекомендации по обустройству дома для молодого животного";
+    public final static String BUTTON_ARRANGEMENAT_FOR_ADULT_TEXT = "Рекомендации по обустройству дома для взрослого животного";
+    public final static String BUTTON_ADVICES_FOR_DISABLE_ANIMAL_TEXT = "Рекомендации для животного с ограниченными возможностями";
+    public final static String BUTTON_ADVICES_FROM_KINOLOG_TEXT = "Советы кинолога по общению с собакой";
+    public final static String BUTTON_RECOMMENDED_KINOLOGS_TEXT = "Рекомендации по проверенным кинологам";
+    public final static String BUTTON_REASONS_FOR_REFUSAL_TEXT = "Причины отказа в усыновлении";
+
 
     // Buttons callback text
     public final static String BUTTON_CAT_SHELTER_CALLBACK_TEXT = "button_Cat_Shelter_clicked";
