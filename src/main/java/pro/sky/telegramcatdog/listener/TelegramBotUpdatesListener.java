@@ -3,32 +3,30 @@ package pro.sky.telegramcatdog.listener;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.CallbackQuery;
-import com.pengrad.telegrambot.model.Message;
+import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.DeleteMessage;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import pro.sky.telegramcatdog.constants.PetType;
-import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.AdoptionDoc;
-import pro.sky.telegramcatdog.model.BranchParams;
-import pro.sky.telegramcatdog.model.Guest;
-import pro.sky.telegramcatdog.model.Volunteer;
-import pro.sky.telegramcatdog.repository.AdopterRepository;
-import pro.sky.telegramcatdog.repository.AdoptionDocRepository;
-import pro.sky.telegramcatdog.repository.BranchParamsRepository;
-import pro.sky.telegramcatdog.repository.GuestRepository;
-import pro.sky.telegramcatdog.repository.VolunteerRepository;
+import pro.sky.telegramcatdog.constants.UpdateStatus;
+import pro.sky.telegramcatdog.model.*;
+import pro.sky.telegramcatdog.repository.*;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -38,19 +36,28 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private TelegramBot telegramBot;
     private PetType shelterType;
+    private UpdateStatus updateStatus;
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
-    private final AdoptionDocRepository adoptionDocRepository;
+    private final AdoptionReportRepository adoptionReportRepository;
     private final BranchParamsRepository branchParamsRepository;
+    private final AdoptionDocRepository adoptionDocRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,BranchParamsRepository branchParamsRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot,
+                                      VolunteerRepository volunteerRepository,
+                                      GuestRepository guestRepository,
+                                      AdopterRepository adopterRepository,
+                                      AdoptionDocRepository adoptionDocRepository,
+                                      AdoptionReportRepository adoptionReportRepository,
+                                      BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
-        this.branchParamsRepository = branchParamsRepository;
         this.adoptionDocRepository = adoptionDocRepository;
+        this.adoptionReportRepository = adoptionReportRepository;
+        this.branchParamsRepository = branchParamsRepository;
     }
 
     @PostConstruct
@@ -118,11 +125,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(3).orElse(null).getShortDesc()).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(4).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5L).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(6).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(7).orElse(null).getShortDesc()).callbackData(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT));
         if(shelterType.equals(PetType.DOG)) {
-            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(8).orElse(null).getShortDesc()).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
+            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_KINOLOG_ADVICES_TEXT).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(9).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT));
         }
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(10).orElse(null).getShortDesc()).callbackData(BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT));
@@ -165,19 +172,76 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             saveAdopter(update);
             return;
         }
+        if (updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
+            saveAdoptionReportPicture(update);
+            updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
+            return;
+        }
         if (update.message().text() == null) {
             // For stickers incomeMsgText is null
             return;
         }
         switch (update.message().text()) {
-            case "/start", BUTTON_MAIN_MENU_TEXT:
-                processStartCommand(update);
-                break;
-            case BUTTON_CALL_VOLUNTEER_TEXT:
+            case "/start", BUTTON_MAIN_MENU_TEXT -> processStartCommand(update);
+            case BUTTON_CALL_VOLUNTEER_TEXT ->
                 // Call a volunteer
-                callVolunteer(update);
-                break;
+                    callVolunteer(update);
+            default -> saveAdoptionReportText(update);
         }
+    }
+
+    private void saveAdoptionReportText(Update update) {
+        switch (updateStatus) {
+            case WAITING_FOR_PET_DIET -> saveAdoptionReportDiet(update);
+        }
+    }
+
+    private void saveAdoptionReportDiet(Update update) {
+        long chatId = update.message().chat().id();
+        Adopter adopter =  adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
+        if (adoptionReport != null) {
+            String diet = update.message().text();
+            adoptionReport.setDiet(diet);
+            adoptionReportRepository.save(adoptionReport);
+        }
+    }
+
+    private void saveAdoptionReportPicture(Update update) {
+        if (update.message().photo() != null) {
+            long chatId = update.message().chat().id();
+            Adopter adopterId =  adopterRepository.findByChatId(chatId);
+            byte[] image = getPhoto(update);
+            LocalDate photoSendingTime = LocalDate.now();
+            AdoptionReport adoptionReport = new AdoptionReport(image, null, null, null, photoSendingTime);
+            adoptionReport.setAdopterId(adopterId);
+            adoptionReportRepository.save(adoptionReport);
+            long id = adoptionReport.getId();
+            SendMessage message = new SendMessage(chatId, SEND_YOUR_PET_DIET_TEXT);
+            sendMessage(message);
+        }
+    }
+
+    private byte[] getPhoto(Update update) {
+        if (update.message().photo() != null) {
+            PhotoSize[] photoSizes = update.message().photo();
+            for (PhotoSize photoSize: photoSizes) {
+                GetFile getFile = new GetFile(photoSize.fileId());
+                GetFileResponse getFileResponse = telegramBot.execute(getFile);
+                if (getFileResponse.isOk()) {
+                    File file = getFileResponse.file();
+                    String extension = StringUtils.getFilenameExtension(file.filePath());
+                    try {
+                        byte[] image = telegramBot.getFileContent(file);
+                        return image;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -192,101 +256,117 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (callbackQuery != null) {
             long chatId = callbackQuery.message().chat().id();
             switch (callbackQuery.data()) {
-                case BUTTON_CAT_SHELTER_CALLBACK_TEXT:
+                case BUTTON_CAT_SHELTER_CALLBACK_TEXT -> {
                     // Cat shelter selected
                     sendButtonClickMessage(chatId, BUTTON_CAT_SHELTER_CALLBACK_TEXT);
                     processCatShelterClick(chatId);
-                    break;
-                case BUTTON_DOG_SHELTER_CALLBACK_TEXT:
+                }
+                case BUTTON_DOG_SHELTER_CALLBACK_TEXT -> {
                     // Dog shelter selected
                     sendButtonClickMessage(chatId, BUTTON_DOG_SHELTER_CALLBACK_TEXT);
                     processDogShelterClick(chatId);
-                    break;
-                case BUTTON_STAGE1_CALLBACK_TEXT:
+                }
+                case BUTTON_STAGE1_CALLBACK_TEXT -> {
                     // General info about the shelter (stage 1)
                     sendButtonClickMessage(chatId, BUTTON_STAGE1_CALLBACK_TEXT);
                     processStage1Click(chatId);
-                    break;
-                case BUTTON_STAGE2_CALLBACK_TEXT:
+                }
+                case BUTTON_STAGE2_CALLBACK_TEXT -> {
                     // How to adopt a dog/cat (stage 2)
                     sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
                     processStage2Click(chatId);
-                    break;
-                case BUTTON_STAGE3_CALLBACK_TEXT:
+                }
+                case BUTTON_STAGE3_CALLBACK_TEXT -> {
                     // Send a follow-up report (stage 3)
                     sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
                     processStage3Click(chatId);
-                    break;
-                case BUTTON_SHARE_CONTACT_CALLBACK_TEXT:
+                }
+                case BUTTON_SHARE_CONTACT_CALLBACK_TEXT -> {
                     // Share your contact details
                     sendButtonClickMessage(chatId, BUTTON_SHARE_CONTACT_CALLBACK_TEXT);
                     shareContact(update);
-                    break;
-                case BUTTON_INFO_SHELTER_CALLBACK_TEXT:
+                }
+                case BUTTON_INFO_SHELTER_CALLBACK_TEXT -> {
                     // Safety information
-                    sendButtonClickMessage(chatId,BUTTON_INFO_SHELTER_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_INFO_SHELTER_CALLBACK_TEXT);
                     processGettingInformationAboutShelter(chatId);
-                    break;
-                case BUTTON_INFO_SECURITY_CALLBACK_TEXT:
+                }
+                case BUTTON_INFO_SECURITY_CALLBACK_TEXT -> {
                     // Obtaining security contacts
-                    sendButtonClickMessage(chatId,BUTTON_INFO_SECURITY_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_INFO_SECURITY_CALLBACK_TEXT);
                     processGettingInformationAboutSecurity(chatId);
-                    break;
-                case BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT:
+                }
+                case BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT -> {
                     // Obtaining Safety Instructions
-                    sendButtonClickMessage(chatId,BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
                     processGettingInformationAboutSafetyPrecautions(chatId);
-                    break;
-                case BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT:
+                }
+                case BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT -> {
                     // Instruction how to meet animal first time
                     sendButtonClickMessage(chatId, BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT);
                     processInfoMeetingClick(chatId);
-                    break;
-                case BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT:
+                }
+                case BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT -> {
                     // List of required docs
                     sendButtonClickMessage(chatId, BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT);
                     processListOfDocsClick(chatId);
-                    break;
-                case BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT:
+                }
+                case BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT -> {
                     // Recommendation how to transport animals
                     sendButtonClickMessage(chatId, BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT);
                     processTransportAnimal(chatId);
-                    break;
-                case BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT:
+                }
+                case BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT -> {
                     //  Arrangement for little animal in house
                     sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT);
                     processRecForLittle(chatId);
-                    break;
-                case BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT:
+                }
+                case BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT -> {
                     // Arrangement for adult animal in house
                     sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT);
                     processRecForAdult(chatId);
-                    break;
-                case BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT:
+                }
+                case BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT -> {
                     // Advices how to be with disable animals
                     sendButtonClickMessage(chatId, BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT);
                     processRecForDisable(chatId);
-                    break;
-                case BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT:
+                }
+                case BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT -> {
                     // Advices from kinolog
                     sendButtonClickMessage(chatId, BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT);
                     processKinologAdvices(chatId);
-                    break;
-                case BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT:
+                }
+                case BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT -> {
                     // List of recommended kinologs
                     sendButtonClickMessage(chatId, BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT);
                     processRecKinologs(chatId);
-                    break;
-                case BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT:
+                }
+                case BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT -> {
                     // Reasons why we can refuse you
                     sendButtonClickMessage(chatId, BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT);
                     processReasonsRefusal(chatId);
-                    break;
-
+                }
+                case BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT ->
+                        sendButtonClickMessage(chatId, BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT);
+                case BUTTON_SEND_REPORT_CALLBACK_TEXT -> {
+                    sendButtonClickMessage(chatId, BUTTON_SEND_REPORT_CALLBACK_TEXT);
+                    sendReport(update);
+                }
+                case BUTTON_SHOW_SHELTER_DETAILS_CALLBACK_TEXT -> {
+                    sendButtonClickMessage(chatId, BUTTON_SHOW_SHELTER_DETAILS_CALLBACK_TEXT);
+                    //showShelterDetails(update);
+                }
 
                 // todo (Olga, Denis, Tamerlan): process more button clicks here
             }
         }
+    }
+
+    private void sendReport(Update update) {
+        long chatId = update.callbackQuery().from().id();
+        SendMessage requestPhotoMessage = new SendMessage(chatId, "жду фото");
+        sendMessage(requestPhotoMessage);
+        updateStatus = UpdateStatus.WAITING_FOR_PET_PICTURE;
     }
 
     private void shareContact(Update update) {
@@ -305,14 +385,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         } else {
             shelterType = guest.getLastMenu();
             switch (guest.getLastMenu()) {
-                case DOG:
-                    sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
-                    break;
-                case CAT:
-                    sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
-                    break;
-                default:
-                    sendShelterTypeSelectMessage(chatId);
+                case DOG -> sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
+                case CAT -> sendStage0Message(chatId, CAT_SHELTER_WELCOME_MSG_TEXT);
+                default -> sendShelterTypeSelectMessage(chatId);
             }
         }
     }
@@ -353,17 +428,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-        String messageText = null;
-        switch (shelterType) {
-            case DOG:
-                messageText = DOG_SHELTER_STAGE1_WELCOME_MSG_TEXT;
-                break;
-            case CAT:
-                messageText = CAT_SHELTER_STAGE1_WELCOME_MSG_TEXT;
-                break;
-        }
-        Message message1 = new Message();
-
+        String messageText = switch (shelterType) {
+            case DOG -> DOG_SHELTER_STAGE1_WELCOME_MSG_TEXT;
+            case CAT -> CAT_SHELTER_STAGE1_WELCOME_MSG_TEXT;
+        };
         SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
         message.replyMarkup(createButtonsStage1());
@@ -459,7 +527,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
         String messageText = adoptionDocRepository.findById(8).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
+        //message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
@@ -491,15 +559,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-        String messageText = null;
-        switch (shelterType) {
-            case DOG:
-                messageText = DOG_SHELTER_STAGE3_WELCOME_MSG_TEXT;
-                break;
-            case CAT:
-                messageText = CAT_SHELTER_STAGE3_WELCOME_MSG_TEXT;
-                break;
-        }
+        String messageText = switch (shelterType) {
+            case DOG -> DOG_SHELTER_STAGE3_WELCOME_MSG_TEXT;
+            case CAT -> CAT_SHELTER_STAGE3_WELCOME_MSG_TEXT;
+        };
         SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
         message.replyMarkup(createButtonsStage3());

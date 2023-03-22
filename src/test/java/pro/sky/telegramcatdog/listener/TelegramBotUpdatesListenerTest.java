@@ -13,10 +13,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pro.sky.telegramcatdog.constants.PetType;
-import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.Guest;
-import pro.sky.telegramcatdog.model.Volunteer;
+import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.AdopterRepository;
+import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -25,6 +24,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -49,6 +49,9 @@ class TelegramBotUpdatesListenerTest {
 
     @Mock
     private AdopterRepository adopterRepository;
+
+    @Mock
+    private BranchParamsRepository branchParamsRepository;
 
     /* Testing '/start' command when it is a new guest (unknown guest). */
     @Test
@@ -206,7 +209,7 @@ class TelegramBotUpdatesListenerTest {
     @Test
     public void handleShareContactWhenItAlreadyExists() throws URISyntaxException, IOException {
         Long chatId = 1122334455L;
-        Adopter adopter = new Adopter("Vasya", "Pupkin", "+79101234567", 1122334455, "@vasya_pupkin");
+        Adopter adopter = new Adopter(1L, "Vasya", "Pupkin", "+79101234567", 1122334455, "@vasya_pupkin");
 
         when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
 
@@ -255,6 +258,35 @@ class TelegramBotUpdatesListenerTest {
 
         Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1122334455L);
         Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(SHARE_CONTACT_MSG_TEXT);
+    }
+
+    @Test
+    public void handleShowShelterDetails() throws URISyntaxException, IOException {
+        BranchParams branchParams = new BranchParams(1, "Dog Shelter");
+        branchParams.setCity("Moscow");
+        branchParams.setAddress("Dog Street");
+        branchParams.setWorkHours("9:00 - 12:00");
+
+        when(branchParamsRepository.findById(any(Integer.class))).thenReturn(Optional.of(branchParams));
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_SHOW_SHELTER_DETAILS_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1122334455L);
+        Assertions.assertThat(actual.getParameters().get("text"))
+                .isEqualTo(MessageFormat.format(SHELTER_DETAILS_TEXT, branchParams.getCity(), branchParams.getAddress(),
+                        branchParams.getWorkHours()));
+    }
+
+    @Test
+    public void handleKinologAdvices() throws URISyntaxException, IOException {
+        AdoptionDoc adoptionDoc = new AdoptionDoc()
     }
 
     private Update getUpdateMessage(String json, String replaced) {
