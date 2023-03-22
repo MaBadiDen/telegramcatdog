@@ -173,15 +173,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             saveAdopter(update);
             return;
         }
-        if (update.message().text() == null) {
-            // For stickers incomeMsgText is null
-            return;
+
+        if (update.message().photo() != null) {
+            if (updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
+                saveAdoptionReportPhoto(update);
+                updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
+                return;
+            }
         }
-        if (update.message().photo() != null && updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
-            saveAdoptionReportPhoto(update);
-            updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
-            return;
-        }
+
         if (update.message().text() != null)  {
             switch (updateStatus) {
                 case WAITING_FOR_PET_DIET:
@@ -197,6 +197,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     updateStatus = UpdateStatus.DEFAULT;
                     break;
             }
+        }
+
+        if (update.message().text() == null) {
+            // For stickers incomeMsgText is null
+            return;
         }
 
         switch (update.message().text()) {
@@ -252,10 +257,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     sendMessage(instructionMessage);
                     break;
                 case BUTTON_SEND_REPORT_CALLBACK_TEXT:
-                    SendMessage requestPhotoMessage = new SendMessage(chatId, "жду фото");
-                    sendMessage(requestPhotoMessage);
                     updateStatus = UpdateStatus.WAITING_FOR_PET_PICTURE;
                     saveAdoptionReport(chatId);
+                    SendMessage requestPhotoMessage = new SendMessage(chatId, "жду фото");
+                    sendMessage(requestPhotoMessage);
                     break;
                 case BUTTON_SHARE_CONTACT_CALLBACK_TEXT:
                     // Share your contact details
