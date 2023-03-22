@@ -445,7 +445,6 @@ class TelegramBotUpdatesListenerTest {
 
     @Test
     public void handleButtonReasonRefusalClickTest() throws URISyntaxException, IOException {
-
         AdoptionDoc adoptionDoc = new AdoptionDoc(1, "Причины отказа в усыновлении", "Бывает");
         when(adoptionDocRepository.findById(any(Integer.class))).thenReturn(Optional.of(adoptionDoc));
 
