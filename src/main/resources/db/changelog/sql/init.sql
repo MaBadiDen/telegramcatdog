@@ -127,3 +127,7 @@ ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS pet_type INT;
 ALTER TABLE adopters DROP COLUMN IF EXISTS telegram;
 ALTER TABLE adopters ADD COLUMN IF NOT EXISTS chat_id BIGINT;
 ALTER TABLE adopters ADD COLUMN IF NOT EXISTS username VARCHAR;
+
+--changeset itamerlan:11
+ALTER TABLE adoption_reports
+ALTER COLUMN report_date TYPE DATE;
