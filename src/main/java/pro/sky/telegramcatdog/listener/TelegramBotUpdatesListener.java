@@ -2,23 +2,25 @@ package pro.sky.telegramcatdog.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.CallbackQuery;
-import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.DeleteMessage;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.constants.UpdateStatus;
+import pro.sky.telegramcatdog.model.*;
+import pro.sky.telegramcatdog.repository.*;
 import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.AdoptionDoc;
 import pro.sky.telegramcatdog.model.BranchParams;
 import pro.sky.telegramcatdog.model.Guest;
 import pro.sky.telegramcatdog.model.Volunteer;
@@ -28,13 +30,17 @@ import pro.sky.telegramcatdog.repository.BranchParamsRepository;
 import pro.sky.telegramcatdog.repository.GuestRepository;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
+import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
+
+    private UpdateStatus updateStatus = UpdateStatus.DEFAULT;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private TelegramBot telegramBot;
 
@@ -51,15 +57,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
     private final AdoptionDocRepository adoptionDocRepository;
+    private final AdoptionReportRepository adoptionReportRepository;
     private final BranchParamsRepository branchParamsRepository;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository,BranchParamsRepository branchParamsRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository) {
         this.telegramBot = telegramBot;
         this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
-        this.branchParamsRepository = branchParamsRepository;
         this.adoptionDocRepository = adoptionDocRepository;
+        this.adoptionReportRepository = adoptionReportRepository;
+        this.branchParamsRepository = branchParamsRepository;
     }
 
     @PostConstruct
@@ -169,15 +177,39 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      *               but process only messages with {@code message()} defined.
      */
     private void processMessage(Update update) {
+        long chatId = update.message().chat().id();
         if (update.message().contact() != null) {
             // Save new adopter contacts in our db
             saveAdopter(update);
             return;
         }
+
+        if (updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
+            saveAdoptionReportPhoto(update);
+            updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
+            return;
+        }
+        if (updateStatus == UpdateStatus.WAITING_FOR_PET_DIET) {
+            saveAdoptionReportDiet(update);
+            updateStatus = UpdateStatus.WAITING_FOR_WELL_BEING;
+            return;
+        }
+        if (updateStatus ==  UpdateStatus.WAITING_FOR_WELL_BEING) {
+            saveAdoptionReportWellBeing(update);
+            updateStatus = UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE;
+            return;
+        }
+        if (updateStatus == UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE) {
+            saveAdoptionReportBehaviorChange(update);
+            updateStatus = UpdateStatus.DEFAULT;
+            return;
+        }
+
         if (update.message().text() == null) {
             // For stickers incomeMsgText is null
             return;
         }
+
         switch (update.message().text()) {
             case "/start", BUTTON_MAIN_MENU_TEXT:
                 processStartCommand(update);
@@ -225,6 +257,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     // Send a follow-up report (stage 3)
                     sendButtonClickMessage(chatId, BUTTON_STAGE3_CALLBACK_TEXT);
                     processStage3Click(chatId);
+                    break;
+                case BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT:
+                    SendMessage instructionMessage = new SendMessage(chatId, ADOPTION_REPORT_INSTRUCTION);
+                    sendMessage(instructionMessage);
+                    break;
+                case BUTTON_SEND_REPORT_CALLBACK_TEXT:
+                    updateStatus = UpdateStatus.WAITING_FOR_PET_PICTURE;
+                    saveAdoptionReport(chatId);
                     break;
                 case BUTTON_SHARE_CONTACT_CALLBACK_TEXT:
                     // Share your contact details
@@ -559,6 +599,79 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         }
     }
 
+    private void saveAdoptionReport( long chatId ) {
+        Adopter adopterId = adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopterId, date);
+        if (adoptionReport == null) {
+            adoptionReport = new AdoptionReport(adopterId, date, null, null, null, null);
+            adoptionReportRepository.save(adoptionReport);
+            SendMessage requestPhotoMessage = new SendMessage(chatId, PHOTO_WAITING_MESSAGE);
+            sendMessage(requestPhotoMessage);
+        }
+        if (adoptionReport.getBehaviorChange() != null ) {
+            SendMessage message = new SendMessage(chatId, ADOPTION_REPORT_ALREADY_EXIST );
+            sendMessage(message);
+        }
+
+    }
+
+    private void saveAdoptionReportPhoto(Update update) {
+        long chatId = update.message().chat().id();
+        Adopter adopter = adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
+        if (update.message().photo() != null) {
+            byte[] image = getPhoto(update);
+            adoptionReport.setPicture(image);
+            adoptionReportRepository.save(adoptionReport);
+            SendMessage savePhotoMessage = new SendMessage(chatId,  PHOTO_SAVED_MESSAGE);
+            sendMessage(savePhotoMessage);
+        }
+    }
+    private void saveAdoptionReportDiet(Update update) {
+        long chatId = update.message().chat().id();
+        Adopter adopter = adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
+        String diet = adoptionReport.getDiet();
+        if (diet == null) {
+            String newDiet = update.message().text();
+            adoptionReport.setDiet(newDiet);
+            adoptionReportRepository.save(adoptionReport);
+            SendMessage saveDietMessage = new SendMessage(chatId, DIET_SAVED_MESSAGE);
+            sendMessage(saveDietMessage);
+        }
+    }
+    private void saveAdoptionReportWellBeing(Update update) {
+        long chatId = update.message().chat().id();
+        Adopter adopter = adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
+        String wellBeing = adoptionReport.getWellBeing();
+        if (wellBeing == null) {
+            String newWellBeing = update.message().text();
+            adoptionReport.setWellBeing(newWellBeing);
+            adoptionReportRepository.save(adoptionReport);
+            SendMessage saveWellBeingMessage = new SendMessage(chatId,  WELL_BEING_SAVED_MESSAGE);
+            sendMessage(saveWellBeingMessage);
+        }
+    }
+    private void saveAdoptionReportBehaviorChange(Update update) {
+        long chatId = update.message().chat().id();
+        Adopter adopter = adopterRepository.findByChatId(chatId);
+        LocalDate date = LocalDate.now();
+        AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
+        String behaviorChane = adoptionReport.getBehaviorChange();
+        if (behaviorChane == null) {
+            String newBehaviorChane = update.message().text();
+            adoptionReport.setBehaviorChange(newBehaviorChane);
+            adoptionReportRepository.save(adoptionReport);
+            SendMessage saveBehaviorChangeMessage = new SendMessage(chatId,  BEHAVIOR_CHANGE_SAVED_MESSAGE);
+            sendMessage(saveBehaviorChangeMessage);
+        }
+    }
     private void processGettingInformationAboutShelter(long chatId){
         if (shelterType == null) {
             return;
@@ -616,5 +729,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(message);
 
         }
+    public byte[] getPhoto(Update update) {
+        if (update.message().photo() != null) {
+            PhotoSize[] photoSizes = update.message().photo();
+            for (PhotoSize photoSize: photoSizes) {
+                GetFile getFile = new GetFile(photoSize.fileId());
+                GetFileResponse getFileResponse = telegramBot.execute(getFile);
+                if (getFileResponse.isOk()) {
+                    File file = getFileResponse.file();
+                    String extension = StringUtils.getFilenameExtension(file.filePath());
+                    try {
+                        byte[] image = telegramBot.getFileContent(file);
+                        return image;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return null;
     }
+}
 
