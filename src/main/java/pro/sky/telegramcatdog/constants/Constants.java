@@ -31,6 +31,19 @@ public class Constants {
     public final static String WE_WILL_CALL_YOU_TEXT = "Скоро с вами свяжется наш волонтер.";
     public final static String RULES_HOW_TO_MEET_ANIMAL_DOG = "Скоро добавим информацию по собакам";
     public final static String RULES_HOW_TO_MEET_ANIMAL_CAT = "Скоро добавим информацию по кошкам";
+    public final static String PHOTO_WAITING_MESSAGE = "Жду фото! ";
+    public final static String ADOPTION_REPORT_ALREADY_EXIST = "Отчет уже сделан! ";
+    public final static String PHOTO_SAVED_MESSAGE = "Фото сохранено, далее рацион! ";
+    public final static String DIET_SAVED_MESSAGE = "Рацион сохранен. Расскажите о самочувствиИ питомца. ";
+    public final static String WELL_BEING_SAVED_MESSAGE = "Сохранили! Заметили ли вы изменения в пповедении питомца? ";
+    public final static String BEHAVIOR_CHANGE_SAVED_MESSAGE = "Отчет сохранен! ";
+    public final static String ADOPTION_REPORT_INSTRUCTION = " После того как вы нажмете на кнопку - 'прислать отчет', вам нужно будет отправить информацию тремя последовательными сообщениями \n " +
+            "Первым сообщение нужно отправить фото питомца. \n" +
+            "После фото нужно отправить рацион питомца на сегодня. \n" +
+            "Третим сообщением пришлите краткое описание самочувствия питомца. \n" +
+            "Последним - четвертым сообщением, отправте информацио о каких либо изменениях в поведении питомца. \n \n " +
+            "На этом ежедневный отчет будет сохранен, я оповещу вас сообветствующим сообщением \n" +
+            "Не переживайте, во время отправки ежедневного отчета я также буду напоминать что должно содержаться в каждом сообщении! ";
 
     // Buttons text
     public final static String BUTTON_CAT_SHELTER_TEXT = "Приют для кошек";

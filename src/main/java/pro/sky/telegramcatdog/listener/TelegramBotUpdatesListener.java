@@ -168,35 +168,32 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      *               but process only messages with {@code message()} defined.
      */
     private void processMessage(Update update) {
+        long chatId = update.message().chat().id();
         if (update.message().contact() != null) {
             // Save new adopter contacts in our db
             saveAdopter(update);
             return;
         }
 
-        if (update.message().photo() != null) {
-            if (updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
-                saveAdoptionReportPhoto(update);
-                updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
-                return;
-            }
+        if (updateStatus == UpdateStatus.WAITING_FOR_PET_PICTURE) {
+            saveAdoptionReportPhoto(update);
+            updateStatus = UpdateStatus.WAITING_FOR_PET_DIET;
+            return;
         }
-
-        if (update.message().text() != null)  {
-            switch (updateStatus) {
-                case WAITING_FOR_PET_DIET:
-                    saveAdoptionReportDiet(update);
-                    updateStatus = UpdateStatus.WAITING_FOR_WELL_BEING;
-                    break;
-                case WAITING_FOR_WELL_BEING:
-                    saveAdoptionReportWellBeing(update);
-                    updateStatus = UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE;
-                    break;
-                case WAITING_FOR_BEHAVIOR_CHANGE:
-                    saveAdoptionReportBehaviorChange(update);
-                    updateStatus = UpdateStatus.DEFAULT;
-                    break;
-            }
+        if (updateStatus == UpdateStatus.WAITING_FOR_PET_DIET) {
+            saveAdoptionReportDiet(update);
+            updateStatus = UpdateStatus.WAITING_FOR_WELL_BEING;
+            return;
+        }
+        if (updateStatus ==  UpdateStatus.WAITING_FOR_WELL_BEING) {
+            saveAdoptionReportWellBeing(update);
+            updateStatus = UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE;
+            return;
+        }
+        if (updateStatus == UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE) {
+            saveAdoptionReportBehaviorChange(update);
+            updateStatus = UpdateStatus.DEFAULT;
+            return;
         }
 
         if (update.message().text() == null) {
@@ -253,14 +250,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     processStage3Click(chatId);
                     break;
                 case BUTTON_REPORT_TEMPLATE_CALLBACK_TEXT:
-                    SendMessage instructionMessage = new SendMessage(chatId, "тут будет инструкция");
+                    SendMessage instructionMessage = new SendMessage(chatId, ADOPTION_REPORT_INSTRUCTION);
                     sendMessage(instructionMessage);
                     break;
                 case BUTTON_SEND_REPORT_CALLBACK_TEXT:
                     updateStatus = UpdateStatus.WAITING_FOR_PET_PICTURE;
                     saveAdoptionReport(chatId);
-                    SendMessage requestPhotoMessage = new SendMessage(chatId, "жду фото");
-                    sendMessage(requestPhotoMessage);
                     break;
                 case BUTTON_SHARE_CONTACT_CALLBACK_TEXT:
                     // Share your contact details
@@ -630,8 +625,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopterId, date);
         if (adoptionReport == null) {
-            adoptionReport = new AdoptionReport(adopterId, date, null, "diet", "bring", "change");
+            adoptionReport = new AdoptionReport(adopterId, date, null, null, null, null);
             adoptionReportRepository.save(adoptionReport);
+            SendMessage requestPhotoMessage = new SendMessage(chatId, PHOTO_WAITING_MESSAGE);
+            sendMessage(requestPhotoMessage);
+        }
+        if (adoptionReport.getBehaviorChange() != null ) {
+            SendMessage message = new SendMessage(chatId, ADOPTION_REPORT_ALREADY_EXIST );
+            sendMessage(message);
         }
 
     }
@@ -645,6 +646,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             byte[] image = getPhoto(update);
             adoptionReport.setPicture(image);
             adoptionReportRepository.save(adoptionReport);
+            SendMessage savePhotoMessage = new SendMessage(chatId,  PHOTO_SAVED_MESSAGE);
+            sendMessage(savePhotoMessage);
         }
     }
     private void saveAdoptionReportDiet(Update update) {
@@ -652,10 +655,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Adopter adopter = adopterRepository.findByChatId(chatId);
         LocalDate date = LocalDate.now();
         AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
-        if (update.message().text() != null) {
+        String diet = adoptionReport.getDiet();
+        if (diet == null) {
             String newDiet = update.message().text();
             adoptionReport.setDiet(newDiet);
             adoptionReportRepository.save(adoptionReport);
+            SendMessage saveDietMessage = new SendMessage(chatId, DIET_SAVED_MESSAGE);
+            sendMessage(saveDietMessage);
         }
     }
     private void saveAdoptionReportWellBeing(Update update) {
@@ -663,10 +669,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Adopter adopter = adopterRepository.findByChatId(chatId);
         LocalDate date = LocalDate.now();
         AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
-        if (update.message().text() != null) {
-            String newDiet = update.message().text();
-            adoptionReport.setWellBeing(newDiet);
+        String wellBeing = adoptionReport.getWellBeing();
+        if (wellBeing == null) {
+            String newWellBeing = update.message().text();
+            adoptionReport.setWellBeing(newWellBeing);
             adoptionReportRepository.save(adoptionReport);
+            SendMessage saveWellBeingMessage = new SendMessage(chatId,  WELL_BEING_SAVED_MESSAGE);
+            sendMessage(saveWellBeingMessage);
         }
     }
     private void saveAdoptionReportBehaviorChange(Update update) {
@@ -674,10 +683,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Adopter adopter = adopterRepository.findByChatId(chatId);
         LocalDate date = LocalDate.now();
         AdoptionReport adoptionReport = adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(adopter, date);
-        if (update.message().text() != null) {
-            String newDiet = update.message().text();
-            adoptionReport.setBehaviorChange(newDiet);
+        String behaviorChane = adoptionReport.getBehaviorChange();
+        if (behaviorChane == null) {
+            String newBehaviorChane = update.message().text();
+            adoptionReport.setBehaviorChange(newBehaviorChane);
             adoptionReportRepository.save(adoptionReport);
+            SendMessage saveBehaviorChangeMessage = new SendMessage(chatId,  BEHAVIOR_CHANGE_SAVED_MESSAGE);
+            sendMessage(saveBehaviorChangeMessage);
         }
     }
     private void processGettingInformationAboutShelter(long chatId){
