@@ -62,6 +62,14 @@ public class Constants {
     public final static String BUTTON_INFO_SHELTER_TEXT = "Расписание работы / адрес / схема проезда";
     public final static String BUTTON_INFO_SECURITY_TEXT = "Оформление пропуска на машину";
     public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_TEXT = "Информация о технике безопасности";
+    public final static String BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_TEXT = "Рекомендации по транспортировке животного";
+    public final static String BUTTON_ARRANGEMENT_FOR_PUPPY_TEXT = "Рекомендации по обустройству дома для молодого животного";
+    public final static String BUTTON_ARRANGEMENT_FOR_ADULT_TEXT = "Рекомендации по обустройству дома для взрослого животного";
+    public final static String BUTTON_ADVICES_FOR_DISABLED_PET_TEXT = "Рекомендации для животного с ограниченными возможностями";
+    public final static String BUTTON_ADVICES_FROM_KINOLOG_TEXT = "Советы кинолога по общению с собакой";
+    public final static String BUTTON_RECOMMENDED_KINOLOGS_TEXT = "Рекомендации по проверенным кинологам";
+    public final static String BUTTON_REASONS_FOR_REFUSAL_TEXT = "Причины отказа в усыновлении";
+
 
     // Buttons callback text
     public final static String BUTTON_CAT_SHELTER_CALLBACK_TEXT = "button_Cat_Shelter_clicked";
@@ -76,9 +84,9 @@ public class Constants {
     public final static String BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT = "button_rulesMeetingAnimal_clicked";
     public final static String BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT = "button_docsForAdoption_clicked";
     public final static String BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT = "button_recForTransport_clicked";
-    public final static String BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT = "button_arrangForLittle_clicked";
-    public final static String BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT = "button_arrangForAdult_clicked";
-    public final static String BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT = "button_advicesForDisable_clicked";
+    public final static String BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT = "button_arrangForLittle_clicked";
+    public final static String BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT = "button_arrangForAdult_clicked";
+    public final static String BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT = "button_advicesForDisable_clicked";
     public final static String BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT = "button_advicesFromKinolog_clicked";
     public final static String BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT = "button_recommendedKinologs_clicked";
     public final static String BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT = "button_reasonsRefusal_clicked";
