@@ -127,9 +127,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_DOCS_FOR_ADOPTION_TEXT).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_TEXT).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENAT_FOR_LITTLE_TEXT).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENAT_FOR_ADULT_TEXT).callbackData(BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_TEXT).callbackData(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_PUPPY_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_ADULT_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FOR_DISABLED_PET_TEXT).callbackData(BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT));
         if(shelterType.equals(PetType.DOG)) {
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FROM_KINOLOG_TEXT).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RECOMMENDED_KINOLOGS_TEXT).callbackData(BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT));
@@ -261,19 +261,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     sendButtonClickMessage(chatId, BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT);
                     processTransportAnimal(chatId);
                     break;
-                case BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT:
+                case BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT:
                     //  Arrangement for little animal in house
-                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT);
                     processRecForLittle(chatId);
                     break;
-                case BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT:
+                case BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT:
                     // Arrangement for adult animal in house
-                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT);
                     processRecForAdult(chatId);
                     break;
-                case BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT:
+                case BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT:
                     // Advices how to be with disable animals
-                    sendButtonClickMessage(chatId, BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT);
                     processRecForDisable(chatId);
                     break;
                 case BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT:
@@ -401,6 +401,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void processInfoMeetingClick(long chatId) {
+        if(shelterType == null) {
+            return;
+        }
+
         String messageText = switch (shelterType) {
             case DOG -> adoptionDocRepository.findById(1).orElse(null).getDescription();
             case CAT -> adoptionDocRepository.findById(2).orElse(null).getDescription();

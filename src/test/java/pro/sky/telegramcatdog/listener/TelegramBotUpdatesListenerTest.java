@@ -351,7 +351,7 @@ class TelegramBotUpdatesListenerTest {
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT);
+        Update update = getUpdateMessage(json, BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
@@ -371,7 +371,7 @@ class TelegramBotUpdatesListenerTest {
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT);
+        Update update = getUpdateMessage(json, BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
@@ -391,7 +391,7 @@ class TelegramBotUpdatesListenerTest {
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
-        Update update = getUpdateMessage(json, BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT);
+        Update update = getUpdateMessage(json, BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT);
         telegramBotUpdatesListener.process(Collections.singletonList(update));
 
         ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
