@@ -52,6 +52,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         this.shelterType = shelterType;
     }
 
+    public void setUpdateStatus(UpdateStatus updateStatus) {
+        this.updateStatus = updateStatus;
+    }
+    public UpdateStatus getUpdateStatus() {
+        return updateStatus;
+    }
+
+
     private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
