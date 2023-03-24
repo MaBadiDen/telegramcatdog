@@ -495,9 +495,115 @@ class TelegramBotUpdatesListenerTest {
                 .isEqualTo(PHOTO_WAITING_MESSAGE);
     }
 
-    private Update getUpdateMessage (String json, String replaced) {
-            return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
+    @Test
+    public void handleSaveAdoptionReportDiet() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setUpdateStatus(UpdateStatus.WAITING_FOR_PET_DIET);
 
+        Long chatId = 1122334455L;
+        LocalDate today = LocalDate.now();
+        Adopter adopter = new Adopter(1,
+                "Vasya",
+                "Pupkin",
+                "+79101234567",
+                1122334455,
+                "@vasya_pupkin");
+        AdoptionReport adoptionReport = new AdoptionReport(adopter,
+                today,
+                null,
+                null,
+                null,
+                null);
+
+        when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
+        when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, "qwerty");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text"))
+                .isEqualTo(DIET_SAVED_MESSAGE);
     }
 
+    @Test
+    public void handleSaveAdoptionReportWellBeing() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setUpdateStatus(UpdateStatus.WAITING_FOR_WELL_BEING);
+
+        Long chatId = 1122334455L;
+        LocalDate today = LocalDate.now();
+        Adopter adopter = new Adopter(1,
+                "Vasya",
+                "Pupkin",
+                "+79101234567",
+                1122334455,
+                "@vasya_pupkin");
+        AdoptionReport adoptionReport = new AdoptionReport(adopter,
+                today,
+                null,
+                null,
+                null,
+                null);
+
+        when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
+        when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, "qwerty");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text"))
+                .isEqualTo(WELL_BEING_SAVED_MESSAGE);
+    }
+
+    @Test
+    public void handleSaveAdoptionReportBehaviorChange() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setUpdateStatus(UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE);
+
+        Long chatId = 1122334455L;
+        LocalDate today = LocalDate.now();
+        Adopter adopter = new Adopter(1,
+                "Vasya",
+                "Pupkin",
+                "+79101234567",
+                1122334455,
+                "@vasya_pupkin");
+        AdoptionReport adoptionReport = new AdoptionReport(adopter,
+                today,
+                null,
+                null,
+                null,
+                null);
+
+        when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
+        when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
+        Update update = getUpdateMessage(json, "qwerty");
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text"))
+                .isEqualTo(BEHAVIOR_CHANGE_SAVED_MESSAGE);
+    }
+
+    private Update getUpdateMessage (String json, String replaced) {
+            return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
+    }
 }
