@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -107,7 +107,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Creates buttons for the shelter type selection message (reply to the /start command)
-     *
      * @return {@code InlineKeyboardMarkup}
      */
     private InlineKeyboardMarkup createButtonsShelterTypeSelect() {
@@ -119,7 +118,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Creates buttons for the reply message to the shelter type selection (Stage 0)
-     *
      * @return {@code InlineKeyboardMarkup}
      */
     private InlineKeyboardMarkup createButtonsStage0() {
@@ -186,7 +184,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      *               but process only messages with {@code message()} defined.
      */
     private void processMessage(Update update) {
-        long chatId = update.message().chat().id();
         if (update.message().contact() != null) {
             // Save new adopter contacts in our db
             saveAdopter(update);
@@ -355,7 +352,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(message);
     }
 
-
     private void processStartCommand(Update update) {
         long chatId = update.message().chat().id();
         Guest guest = guestRepository.findByChatId(chatId);
@@ -406,7 +402,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Processing request: General info about the shelter (stage 1)
-     *
      * @param chatId
      */
     private void processStage1Click(long chatId) {
@@ -432,7 +427,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Processing request: How to adopt a dog/cat (stage 2)
-     *
      * @param chatId
      */
     private void processStage2Click(long chatId, Update update) {
@@ -454,7 +448,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-
         String messageText = switch (shelterType) {
             case DOG -> adoptionDocRepository.findById(1).orElse(null).getDescription();
             case CAT -> adoptionDocRepository.findById(2).orElse(null).getDescription();
@@ -515,7 +508,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Processing request: Send a follow-up report (stage 3)
-     *
      * @param chatId
      */
     private void processStage3Click(long chatId) {
