@@ -107,6 +107,4 @@ public class Constants {
     public final static String ADOPTIONDOC_URL = "/pet-shelter/doc";
     public final static String ADOPTER_URL = "/pet-shelter/adopter";
 
-
-
 }

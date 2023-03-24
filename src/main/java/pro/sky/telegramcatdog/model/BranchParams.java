@@ -29,14 +29,13 @@ public class BranchParams {
 
     @Column(name = "pet_type")
     private PetType petType;
+    public BranchParams(){
+
+    }
 
     public BranchParams(int id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public BranchParams() {
-
     }
 
     public int getId() {
@@ -97,6 +96,30 @@ public class BranchParams {
 
     public PetType getPetType() {
         return petType;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setSecurityInfo(String securityInfo) {
+        this.securityInfo = securityInfo;
+    }
+
+    public void setSecurityContact(String securityContact) {
+        this.securityContact = securityContact;
+    }
+
+    public void setWorkHours(String workHours) {
+        this.workHours = workHours;
     }
 
     @Override
