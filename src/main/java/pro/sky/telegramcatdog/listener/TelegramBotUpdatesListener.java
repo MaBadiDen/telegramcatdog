@@ -43,6 +43,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private UpdateStatus updateStatus = UpdateStatus.DEFAULT;
     private Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
     private TelegramBot telegramBot;
+
+    public PetType getShelterType() {
+        return shelterType;
+    }
+
+    public void setShelterType(PetType shelterType) {
+        this.shelterType = shelterType;
+    }
+
     private PetType shelterType;
     private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
@@ -124,16 +133,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private InlineKeyboardMarkup createButtonsStage2() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RULES_MEETING_ANIMAL_TEXT).callbackData(BUTTON_RULES_MEETING_ANIMAL_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(3).orElse(null).getShortDesc()).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(4).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(5).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(6).orElse(null).getShortDesc()).callbackData(BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT));
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(7).orElse(null).getShortDesc()).callbackData(BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_DOCS_FOR_ADOPTION_TEXT).callbackData(BUTTON_DOCS_FOR_ADOPTION_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_TEXT).callbackData(BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_PUPPY_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_ADULT_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FOR_DISABLED_PET_TEXT).callbackData(BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT));
         if(shelterType.equals(PetType.DOG)) {
-            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_KINOLOG_ADVICES_TEXT).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
-            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(9).orElse(null).getShortDesc()).callbackData(BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT));
+            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FROM_KINOLOG_TEXT).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
+            inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RECOMMENDED_KINOLOGS_TEXT).callbackData(BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT));
         }
-        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(adoptionDocRepository.findById(10).orElse(null).getShortDesc()).callbackData(BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_REASONS_FOR_REFUSAL_TEXT).callbackData(BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_SHARE_CONTACT_DETAILS_TEXT).callbackData(BUTTON_SHARE_CONTACT_CALLBACK_TEXT));
         return inlineKeyboardMarkup;
     }
@@ -241,7 +250,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 case BUTTON_STAGE2_CALLBACK_TEXT:
                     // How to adopt a dog/cat (stage 2)
                     sendButtonClickMessage(chatId, BUTTON_STAGE2_CALLBACK_TEXT);
-                    processStage2Click(chatId);
+                    processStage2Click(chatId, update);
                     break;
                 case BUTTON_STAGE3_CALLBACK_TEXT:
                     // Send a follow-up report (stage 3)
@@ -291,19 +300,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     sendButtonClickMessage(chatId, BUTTON_RECOMMENDATIONS_FOR_TRANSPORT_CALLBACK_TEXT);
                     processTransportAnimal(chatId);
                     break;
-                case BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT:
+                case BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT:
                     //  Arrangement for little animal in house
-                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_LITTLE_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT);
                     processRecForLittle(chatId);
                     break;
-                case BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT:
+                case BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT:
                     // Arrangement for adult animal in house
-                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENAT_FOR_ADULT_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT);
                     processRecForAdult(chatId);
                     break;
-                case BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT:
+                case BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT:
                     // Advices how to be with disable animals
-                    sendButtonClickMessage(chatId, BUTTON_ADVICES_FOR_DISABLE_ANIMAL_CALLBACK_TEXT);
+                    sendButtonClickMessage(chatId, BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT);
                     processRecForDisable(chatId);
                     break;
                 case BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT:
@@ -413,7 +422,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
      * Processing request: How to adopt a dog/cat (stage 2)
      * @param chatId
      */
-    private void processStage2Click(long chatId) {
+    private void processStage2Click(long chatId, Update update) {
         if (shelterType == null) {
             return;
         }
@@ -438,87 +447,55 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         };
         SendMessage message = new SendMessage(chatId, messageText);
         // Adding buttons
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processListOfDocsClick(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(3).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processTransportAnimal(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(4).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processRecForLittle(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(5).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
+
         sendMessage(message);
     }
 
     private void processRecForAdult(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(6).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processRecForDisable(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(7).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processKinologAdvices(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(8).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processRecKinologs(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(9).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
     private void processReasonsRefusal(long chatId) {
-        if(shelterType == null) {
-            return;
-        }
         String messageText = adoptionDocRepository.findById(10).orElse(null).getDescription();
         SendMessage message = new SendMessage(chatId, messageText);
-        message.replyMarkup(createButtonsStage2());
         sendMessage(message);
     }
 
