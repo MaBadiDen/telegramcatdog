@@ -7,22 +7,16 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import pro.sky.telegramcatdog.constants.PetType;
+import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
-import pro.sky.telegramcatdog.repository.AdopterRepository;
-import pro.sky.telegramcatdog.repository.AdoptionDocRepository;
-import pro.sky.telegramcatdog.repository.GuestRepository;
-import pro.sky.telegramcatdog.repository.VolunteerRepository;
+import pro.sky.telegramcatdog.repository.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,7 +26,6 @@ import java.sql.Timestamp;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HexFormat;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
