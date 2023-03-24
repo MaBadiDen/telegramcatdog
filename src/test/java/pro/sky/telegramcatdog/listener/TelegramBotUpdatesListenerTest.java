@@ -460,6 +460,7 @@ class TelegramBotUpdatesListenerTest {
         Assertions.assertThat(actual.getParameters().get("text"))
                 .isEqualTo(adoptionDoc.getDescription());
     }
+
     @Test
     public void processGettingInformationAboutShelterTest() throws URISyntaxException, IOException {
         telegramBotUpdatesListener.setShelterType(PetType.DOG);
@@ -528,7 +529,6 @@ class TelegramBotUpdatesListenerTest {
         Assertions.assertThat(actual.getParameters().get("text"))
                 .isEqualTo(branchParams.getSecurityInfo());
     }
-
 
     @Test
     public void handleButtonAdoptionReportInstructionClick() throws URISyntaxException, IOException {
@@ -675,6 +675,4 @@ class TelegramBotUpdatesListenerTest {
     private Update getUpdateMessage (String json, String replaced) {
             return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
     }
-
-    
 }
