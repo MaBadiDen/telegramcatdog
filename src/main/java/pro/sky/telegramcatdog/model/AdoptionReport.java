@@ -27,6 +27,12 @@ public class AdoptionReport {
     private String behaviorChange;
 
     public AdoptionReport() {
+
+    }
+
+    public AdoptionReport(Adopter adopterId, LocalDate reportDate) {
+        this.adopterId = adopterId;
+        this.reportDate = reportDate;
     }
 
     public AdoptionReport(Adopter adopterId, LocalDate reportDate, byte[] picture, String diet, String wellBeing, String behaviorChange) {
