@@ -57,9 +57,6 @@ class TelegramBotUpdatesListenerTest {
     @Mock
     private BranchParamsRepository branchParamsRepository;
 
-
-
-
     /* Testing '/start' command when it is a new guest (unknown guest). */
     @Test
     public void handleStartCommandNewGuestTest() throws URISyntaxException, IOException {
@@ -496,7 +493,6 @@ class TelegramBotUpdatesListenerTest {
         branchParams.setSecurityContact("test security contact");
         when(branchParamsRepository.findById(1)).thenReturn(Optional.of(branchParams));
 
-
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
         Update update = getUpdateMessage(json, BUTTON_INFO_SECURITY_CALLBACK_TEXT);
@@ -518,7 +514,6 @@ class TelegramBotUpdatesListenerTest {
         branchParams.setSecurityInfo("test security info");
         when(branchParamsRepository.findById(1)).thenReturn(Optional.of(branchParams));
 
-
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
         Update update = getUpdateMessage(json, BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT);
@@ -538,9 +533,4 @@ class TelegramBotUpdatesListenerTest {
     private Update getUpdateMessage(String json, String replaced) {
         return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
     }
-
-
-
-
-
 }
