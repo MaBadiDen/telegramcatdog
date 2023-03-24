@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS adoption_docs
     id           SERIAL PRIMARY KEY,
     short_desc   VARCHAR,
     description  VARCHAR
-)
+);
 
 -- changeset alexeym75:8
 DROP SEQUENCE IF EXISTS adoption_reports_adopter_id_seq CASCADE;

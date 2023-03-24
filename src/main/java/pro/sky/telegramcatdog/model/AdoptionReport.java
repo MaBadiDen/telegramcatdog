@@ -40,7 +40,6 @@ public class AdoptionReport {
 
     public AdoptionReport(Long id, byte[] picture, String diet, String wellBeing, String behaviorChange) {
         this.id = id;
-
         this.picture = picture;
         this.diet = diet;
         this.wellBeing = wellBeing;
