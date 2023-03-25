@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
@@ -23,10 +22,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static pro.sky.telegramcatdog.constants.Constants.*;
@@ -671,8 +670,115 @@ class TelegramBotUpdatesListenerTest {
         Assertions.assertThat(actual.getParameters().get("text"))
                 .isEqualTo(BEHAVIOR_CHANGE_SAVED_MESSAGE);
     }
+    /* Testing BUTTON_STAGE1_TEXT click with the guest who has selected CAT shelter. */
+    @Test
+    public void handleCatShelterStage1SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.CAT);
 
-    private Update getUpdateMessage (String json, String replaced) {
-            return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE1_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(CAT_SHELTER_STAGE1_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing BUTTON_STAGE1_TEXT click with the guest who has selected DOG shelter. */
+    @Test
+    public void handleDogShelterStage1SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.DOG);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE1_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(DOG_SHELTER_STAGE1_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing BUTTON_STAGE2_TEXT click with the guest who has selected CAT shelter. */
+    @Test
+    public void handleCatShelterStage2SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.CAT);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE2_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(CAT_SHELTER_STAGE2_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing BUTTON_STAGE2_TEXT click with the guest who has selected DOG shelter. */
+    @Test
+    public void handleDogShelterStage2SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.DOG);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE2_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(DOG_SHELTER_STAGE2_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing BUTTON_STAGE3_TEXT click with the guest who has selected CAT shelter. */
+    @Test
+    public void handleCatShelterStage3SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.CAT);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE3_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(CAT_SHELTER_STAGE3_WELCOME_MSG_TEXT);
+    }
+
+    /* Testing BUTTON_STAGE3_TEXT click with the guest who has selected DOG shelter. */
+    @Test
+    public void handleDogShelterStage3SelectTest() throws URISyntaxException, IOException {
+        telegramBotUpdatesListener.setShelterType(PetType.DOG);
+
+        String json = Files.readString(
+                Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
+        Update update = getUpdateMessage(json, BUTTON_STAGE3_CALLBACK_TEXT);
+        telegramBotUpdatesListener.process(Collections.singletonList(update));
+
+        ArgumentCaptor<SendMessage> argumentCaptor = ArgumentCaptor.forClass(SendMessage.class);
+        Mockito.verify(telegramBot, Mockito.times(2)).execute(argumentCaptor.capture());
+        SendMessage actual = argumentCaptor.getValue();
+
+        Assertions.assertThat(actual.getParameters().get("chat_id")).isEqualTo(1234567809L);
+        Assertions.assertThat(actual.getParameters().get("text")).isEqualTo(DOG_SHELTER_STAGE3_WELCOME_MSG_TEXT);
+    }
+
+    private Update getUpdateMessage(String json, String replaced) {
+        return BotUtils.fromJson(json.replace("%message_text%", replaced), Update.class);
     }
 }
