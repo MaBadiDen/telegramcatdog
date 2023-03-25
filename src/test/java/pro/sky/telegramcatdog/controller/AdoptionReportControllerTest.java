@@ -37,6 +37,7 @@ public class AdoptionReportControllerTest {
         AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", "1");
         ResponseEntity<AdoptionReport> response = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, response);
+
     }
 
     @Test
