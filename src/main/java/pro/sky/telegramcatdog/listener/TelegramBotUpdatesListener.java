@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.DeleteMessage;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import com.pengrad.telegrambot.response.SendResponse;
@@ -20,15 +20,7 @@ import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
-import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.BranchParams;
-import pro.sky.telegramcatdog.model.Guest;
-import pro.sky.telegramcatdog.model.Volunteer;
-import pro.sky.telegramcatdog.repository.AdopterRepository;
-import pro.sky.telegramcatdog.repository.AdoptionDocRepository;
-import pro.sky.telegramcatdog.repository.BranchParamsRepository;
-import pro.sky.telegramcatdog.repository.GuestRepository;
-import pro.sky.telegramcatdog.repository.VolunteerRepository;
+import pro.sky.telegramcatdog.service.VolunteerService;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -59,23 +51,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return updateStatus;
     }
 
-
     private PetType shelterType;
-    private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
     private final AdoptionDocRepository adoptionDocRepository;
     private final AdoptionReportRepository adoptionReportRepository;
     private final BranchParamsRepository branchParamsRepository;
+    private final VolunteerService volunteerService;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository, VolunteerService volunteerService) {
         this.telegramBot = telegramBot;
-        this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
         this.adoptionDocRepository = adoptionDocRepository;
         this.adoptionReportRepository = adoptionReportRepository;
         this.branchParamsRepository = branchParamsRepository;
+        this.volunteerService = volunteerService;
     }
 
     @PostConstruct
@@ -553,8 +544,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         long chatId = 0; // volunteer's chat_id
         userId += update.message().from().id();
         logger.info("UserId = {}", userId);
-        // todo: select random volunteer. Now it always selects the 1st one.
-        Volunteer volunteer = volunteerRepository.findById(1L).orElse(null);
+        Volunteer volunteer = volunteerService.getRandomVolunteer();
         if (volunteer == null) {
             // Guest chat_id. Send message to the guest.
             chatId = Long.parseLong(userId);
