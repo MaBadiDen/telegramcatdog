@@ -37,6 +37,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
+import static pro.sky.telegramcatdog.constants.PetType.CAT;
+import static pro.sky.telegramcatdog.constants.PetType.DOG;
 
 @Service
 public class TelegramBotUpdatesListener implements UpdatesListener {
@@ -146,7 +148,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_PUPPY_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_PUPPY_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ARRANGEMENT_FOR_ADULT_TEXT).callbackData(BUTTON_ARRANGEMENT_FOR_ADULT_CALLBACK_TEXT));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FOR_DISABLED_PET_TEXT).callbackData(BUTTON_ADVICES_FOR_DISABLED_PET_CALLBACK_TEXT));
-        if (shelterType.equals(PetType.DOG)) {
+        if (shelterType.equals(DOG)) {
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_ADVICES_FROM_KINOLOG_TEXT).callbackData(BUTTON_ADVICES_FROM_KINOLOG_CALLBACK_TEXT));
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BUTTON_RECOMMENDED_KINOLOGS_TEXT).callbackData(BUTTON_RECOMMENDED_KINOLOGS_CALLBACK_TEXT));
         }
@@ -380,7 +382,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private void processDogShelterClick(long chatId) {
-        shelterType = PetType.DOG;
+        shelterType = DOG;
         saveGuest(chatId, shelterType);
         sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
     }
@@ -688,7 +690,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         StringBuilder messageText = new StringBuilder();
         switch (shelterType) {
             case DOG:
-                BranchParams dogParams = branchParamsRepository.findById(1).orElse(null);
+                BranchParams dogParams = branchParamsRepository.findByPetType(DOG).orElse(null);
                 if (dogParams != null) {
                     messageText.append("Город: ").append(dogParams.getCity()).append("\n");
                     messageText.append("Адрес: ").append(dogParams.getAddress()).append("\n");
@@ -697,7 +699,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 break;
             case CAT:
-                BranchParams catParams = branchParamsRepository.findById(2).orElse(null);
+                BranchParams catParams = branchParamsRepository.findByPetType(CAT).orElse(null);
                 if (catParams != null) {
                     messageText.append("Город: ").append(catParams.getCity()).append("\n");
                     messageText.append("Адрес: ").append(catParams.getAddress()).append("\n");
@@ -717,10 +719,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         String messageText = null;
         switch (shelterType) {
             case DOG:
-                messageText = branchParamsRepository.findById(1).orElse(null).getSecurityContact();
+                messageText = branchParamsRepository.findByPetType(DOG).orElse(null).getSecurityContact();
                 break;
             case CAT:
-                messageText = branchParamsRepository.findById(2).orElse(null).getSecurityContact();
+                messageText = branchParamsRepository.findByPetType(CAT).orElse(null).getSecurityContact();
                 break;
         }
         SendMessage message = new SendMessage(chatId, messageText);
@@ -734,10 +736,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         String messageText = null;
         switch (shelterType) {
             case DOG:
-                messageText = branchParamsRepository.findById(1).orElse(null).getSecurityInfo();
+                messageText = branchParamsRepository.findByPetType(DOG).orElse(null).getSecurityInfo();
                 break;
             case CAT:
-                messageText = branchParamsRepository.findById(2).orElse(null).getSecurityInfo();
+                messageText = branchParamsRepository.findByPetType(CAT).orElse(null).getSecurityInfo();
                 break;
         }
         SendMessage message = new SendMessage(chatId, messageText);
