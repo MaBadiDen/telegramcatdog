@@ -34,9 +34,10 @@ public class AdoptionReportControllerTest {
 
     @Test
     void createAdoptionReportTest() {
-        AdoptionReport adoptionReport = new AdoptionReport(null, null, "1", "1", null);
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", null);
         ResponseEntity<AdoptionReport> response = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, response);
+
     }
 
     @Test
@@ -49,7 +50,7 @@ public class AdoptionReportControllerTest {
         String newBehaviorChange = "2";
 
         // Create new AdoptionReport first and check that it was created OK
-        AdoptionReport adoptionReport = new AdoptionReport(null, oldDiet, oldWellBeing, oldBehaviorChange, null);
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, oldDiet, oldWellBeing, oldBehaviorChange);
         ResponseEntity<AdoptionReport> responseCreated = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, responseCreated);
 
@@ -82,7 +83,7 @@ public class AdoptionReportControllerTest {
     @Test
     void findAdoptionReportTest() {
         // Create new AdoptionReport and check that it was created OK
-        AdoptionReport adoptionReport = new AdoptionReport(null, null, "1", "1", null);
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", null);
         ResponseEntity<AdoptionReport> responseCreated = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, responseCreated);
 
