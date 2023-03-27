@@ -131,3 +131,7 @@ ALTER TABLE adopters ADD COLUMN IF NOT EXISTS username VARCHAR;
 --changeset itamerlan:11
 ALTER TABLE adoption_reports
 ALTER COLUMN report_date TYPE DATE;
+
+--changeset itamerlan:12
+ALTER TABLE adoption_reports ADD COLUMN IF NOT EXISTS update_status INT;
+

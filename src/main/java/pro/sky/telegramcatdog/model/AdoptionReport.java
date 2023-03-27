@@ -1,6 +1,7 @@
 package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
+import pro.sky.telegramcatdog.constants.UpdateStatus;
 
 import java.time.LocalDate;
 
@@ -25,17 +26,20 @@ public class AdoptionReport {
     @Column(name = "wellbeing")
     private String wellBeing;
     private String behaviorChange;
+    @Column(name = "update_status")
+    private UpdateStatus updateStatus;
 
     public AdoptionReport() {
     }
 
-    public AdoptionReport(Adopter adopterId, LocalDate reportDate, byte[] picture, String diet, String wellBeing, String behaviorChange) {
+    public AdoptionReport(Adopter adopterId, LocalDate reportDate, byte[] picture, String diet, String wellBeing, String behaviorChange, UpdateStatus updateStatus) {
         this.adopterId = adopterId;
         this.reportDate = reportDate;
         this.picture = picture;
         this.diet = diet;
         this.wellBeing = wellBeing;
         this.behaviorChange = behaviorChange;
+        this.updateStatus = updateStatus;
     }
 
     public AdoptionReport(Long id, byte[] picture, String diet, String wellBeing, String behaviorChange) {
@@ -44,6 +48,7 @@ public class AdoptionReport {
         this.diet = diet;
         this.wellBeing = wellBeing;
         this.behaviorChange = behaviorChange;
+
     }
 
     @Override
@@ -57,6 +62,14 @@ public class AdoptionReport {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public UpdateStatus getUpdateStatus() {
+        return updateStatus;
+    }
+
+    public void setUpdateStatus(UpdateStatus updateStatus) {
+        this.updateStatus = updateStatus;
     }
 
     public Long getId() {

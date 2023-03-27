@@ -581,7 +581,8 @@ class TelegramBotUpdatesListenerTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                UpdateStatus.WAITING_FOR_PET_DIET);
 
         when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
         when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
@@ -612,15 +613,18 @@ class TelegramBotUpdatesListenerTest {
                 "+79101234567",
                 1122334455,
                 "@vasya_pupkin");
-        AdoptionReport adoptionReport = new AdoptionReport(adopter,
+        AdoptionReport adoptionReport = new AdoptionReport(
+                adopter,
                 today,
                 null,
                 null,
                 null,
-                null);
+                null,
+                UpdateStatus.DEFAULT);
 
         when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
         when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
+
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
@@ -653,7 +657,8 @@ class TelegramBotUpdatesListenerTest {
                 null,
                 null,
                 null,
-                null);
+                null,
+                UpdateStatus.WAITING_FOR_BEHAVIOR_CHANGE);
 
         when(adoptionReportRepository.findAdoptionReportByAdopterIdAndReportDate(any(Adopter.class), any(LocalDate.class))).thenReturn(adoptionReport);
         when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
