@@ -38,6 +38,14 @@ public class Adopter {
         this.username = username;
     }
 
+    public Adopter(String firstName, String lastName, String phone1, long chatId, String username) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone1 = phone1;
+        this.chatId = chatId;
+        this.username = username;
+    }
+
     public Adopter() {
 
     }

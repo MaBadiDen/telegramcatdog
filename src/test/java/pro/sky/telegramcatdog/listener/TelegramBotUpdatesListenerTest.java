@@ -16,6 +16,7 @@ import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
+import pro.sky.telegramcatdog.service.VolunteerService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,9 +41,6 @@ class TelegramBotUpdatesListenerTest {
     private TelegramBotUpdatesListener telegramBotUpdatesListener;
 
     @Mock
-    private VolunteerRepository volunteerRepository;
-
-    @Mock
     private GuestRepository guestRepository;
 
     @Mock
@@ -56,6 +54,9 @@ class TelegramBotUpdatesListenerTest {
 
     @Mock
     private BranchParamsRepository branchParamsRepository;
+
+    @Mock
+    private VolunteerService volunteerService;
 
     /* Testing '/start' command when it is a new guest (unknown guest). */
     @Test
@@ -154,7 +155,7 @@ class TelegramBotUpdatesListenerTest {
         String userId = "1234567809";
         Volunteer volunteer = new Volunteer(1, "Vasya", volunteerId, "https://t.me/vasyapupkin", null);
 
-        when(volunteerRepository.findById(any(Long.class))).thenReturn(Optional.of(volunteer));
+        when(volunteerService.getRandomVolunteer()).thenReturn(volunteer);
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update.json").toURI()));
@@ -176,7 +177,7 @@ class TelegramBotUpdatesListenerTest {
         String userId = "@vasyapupkin";
         Volunteer volunteer = new Volunteer(1, "Volunteer 1", volunteerId, "https://t.me/volunteer1", null);
 
-        when(volunteerRepository.findById(any(Long.class))).thenReturn(Optional.of(volunteer));
+        when(volunteerService.getRandomVolunteer()).thenReturn(volunteer);
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("text_update_with_username.json").toURI()));

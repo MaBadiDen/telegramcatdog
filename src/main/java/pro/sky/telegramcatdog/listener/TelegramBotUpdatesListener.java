@@ -7,7 +7,6 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.model.request.KeyboardButton;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
-import com.pengrad.telegrambot.request.DeleteMessage;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetFileResponse;
@@ -21,15 +20,7 @@ import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
-import pro.sky.telegramcatdog.model.Adopter;
-import pro.sky.telegramcatdog.model.BranchParams;
-import pro.sky.telegramcatdog.model.Guest;
-import pro.sky.telegramcatdog.model.Volunteer;
-import pro.sky.telegramcatdog.repository.AdopterRepository;
-import pro.sky.telegramcatdog.repository.AdoptionDocRepository;
-import pro.sky.telegramcatdog.repository.BranchParamsRepository;
-import pro.sky.telegramcatdog.repository.GuestRepository;
-import pro.sky.telegramcatdog.repository.VolunteerRepository;
+import pro.sky.telegramcatdog.service.VolunteerService;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -62,23 +53,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return updateStatus;
     }
 
-
     private PetType shelterType;
-    private final VolunteerRepository volunteerRepository;
     private final GuestRepository guestRepository;
     private final AdopterRepository adopterRepository;
     private final AdoptionDocRepository adoptionDocRepository;
     private final AdoptionReportRepository adoptionReportRepository;
     private final BranchParamsRepository branchParamsRepository;
+    private final VolunteerService volunteerService;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, VolunteerRepository volunteerRepository, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, GuestRepository guestRepository, AdopterRepository adopterRepository, AdoptionDocRepository adoptionDocRepository, AdoptionReportRepository adoptionReportRepository, BranchParamsRepository branchParamsRepository, VolunteerService volunteerService) {
         this.telegramBot = telegramBot;
-        this.volunteerRepository = volunteerRepository;
         this.guestRepository = guestRepository;
         this.adopterRepository = adopterRepository;
         this.adoptionDocRepository = adoptionDocRepository;
         this.adoptionReportRepository = adoptionReportRepository;
         this.branchParamsRepository = branchParamsRepository;
+        this.volunteerService = volunteerService;
     }
 
     @PostConstruct
@@ -165,9 +155,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     private ReplyKeyboardMarkup createRequestContactKeyboardButton() {
-        KeyboardButton keyboardButton = new KeyboardButton(BUTTON_SHARE_CONTACT_TEXT);
-        keyboardButton.requestContact(true);
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(keyboardButton);
+        KeyboardButton keyboardButton1 = new KeyboardButton(BUTTON_SHARE_CONTACT_TEXT);
+        KeyboardButton keyboardButton2 = new KeyboardButton(BUTTON_CANCEL_SHARE_CONTACT_TEXT);
+        keyboardButton1.requestContact(true);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(keyboardButton1, keyboardButton2);
         replyKeyboardMarkup.resizeKeyboard(true);
         return replyKeyboardMarkup;
     }
@@ -227,7 +218,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 // Call a volunteer
                 callVolunteer(update);
                 break;
+            case BUTTON_CANCEL_SHARE_CONTACT_TEXT:
+                cancelShareContact(update);
+                break;
         }
+    }
+
+    private void cancelShareContact(Update update) {
+        long chatId = update.message().chat().id();
+        SendMessage message = new SendMessage(chatId, CANCEL_SHARE_CONTACT_MSG_TEXT);
+        sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
     }
 
     /**
@@ -340,9 +340,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     sendButtonClickMessage(chatId, BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT);
                     processReasonsRefusal(chatId);
                     break;
-
-
-                // todo (Olga, Denis, Tamerlan): process more button clicks here
             }
         }
     }
@@ -556,8 +553,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         long chatId = 0; // volunteer's chat_id
         userId += update.message().from().id();
         logger.info("UserId = {}", userId);
-        // todo: select random volunteer. Now it always selects the 1st one.
-        Volunteer volunteer = volunteerRepository.findById(1L).orElse(null);
+        Volunteer volunteer = volunteerService.getRandomVolunteer();
         if (volunteer == null) {
             // Guest chat_id. Send message to the guest.
             chatId = Long.parseLong(userId);
@@ -595,7 +591,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             Adopter adopter = adopterRepository.findByChatId(chatId);
             if (adopter == null) {
-                adopter = new Adopter(1, firstName, lastName, phone1, chatId, username);
+                adopter = new Adopter(firstName, lastName, phone1, chatId, username);
                 adopterRepository.save(adopter);
                 SendMessage message = new SendMessage(chatId, SAVE_ADOPTER_SUCCESS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
                 sendMessage(message.replyMarkup(createMainMenuKeyboardButtons()));
@@ -695,7 +691,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     messageText.append("Город: ").append(dogParams.getCity()).append("\n");
                     messageText.append("Адрес: ").append(dogParams.getAddress()).append("\n");
                     messageText.append("Часы работы: ").append(dogParams.getWorkHours()).append("\n");
-
                 }
                 break;
             case CAT:
@@ -704,7 +699,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     messageText.append("Город: ").append(catParams.getCity()).append("\n");
                     messageText.append("Адрес: ").append(catParams.getAddress()).append("\n");
                     messageText.append("Часы работы: ").append(catParams.getWorkHours()).append("\n");
-
                 }
                 break;
         }
@@ -716,16 +710,22 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-        String messageText = null;
+        StringBuilder messageText = new StringBuilder();
         switch (shelterType) {
             case DOG:
-                messageText = branchParamsRepository.findByPetType(DOG).orElse(null).getSecurityContact();
+                BranchParams dogParams = branchParamsRepository.findByPetType(DOG).orElse(null);
+                if (dogParams != null) {
+                    messageText.append(dogParams.getSecurityContact());
+                }
                 break;
             case CAT:
-                messageText = branchParamsRepository.findByPetType(CAT).orElse(null).getSecurityContact();
+                BranchParams catParams = branchParamsRepository.findByPetType(CAT).orElse(null);
+                if (catParams != null) {
+                    messageText.append(catParams.getSecurityContact());
+                }
                 break;
         }
-        SendMessage message = new SendMessage(chatId, messageText);
+        SendMessage message = new SendMessage(chatId, messageText.toString());
         sendMessage(message);
     }
 
@@ -733,18 +733,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-        String messageText = null;
+        StringBuilder messageText = new StringBuilder();
         switch (shelterType) {
             case DOG:
-                messageText = branchParamsRepository.findByPetType(DOG).orElse(null).getSecurityInfo();
+                BranchParams dogParams = branchParamsRepository.findByPetType(DOG).orElse(null);
+                if (dogParams != null) {
+                    messageText.append(dogParams.getSecurityInfo());
+                }
                 break;
             case CAT:
-                messageText = branchParamsRepository.findByPetType(CAT).orElse(null).getSecurityInfo();
+                BranchParams catParams = branchParamsRepository.findByPetType(CAT).orElse(null);
+                if (catParams != null) {
+                    messageText.append(catParams.getSecurityInfo());
+                }
                 break;
         }
-        SendMessage message = new SendMessage(chatId, messageText);
+        SendMessage message = new SendMessage(chatId, messageText.toString());
         sendMessage(message);
-
     }
 
     public byte[] getPhoto(Update update) {

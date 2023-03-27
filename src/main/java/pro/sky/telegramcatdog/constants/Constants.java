@@ -1,6 +1,5 @@
 package pro.sky.telegramcatdog.constants;
 
-import com.pengrad.telegrambot.model.CallbackQuery;
 import com.vdurmont.emoji.EmojiParser;
 
 public class Constants {
@@ -22,6 +21,7 @@ public class Constants {
     public final static String DOG_SHELTER_STAGE2_WELCOME_MSG_TEXT = "Собачий приют " + EMOJI_DOG + " Этап 2: Как взять собаку из приюта.";
     public final static String DOG_SHELTER_STAGE3_WELCOME_MSG_TEXT = "Собачий приют " + EMOJI_DOG + " Этап 3: Прислать отчет о питомце.";
     public final static String SHARE_CONTACT_MSG_TEXT = "Нажмите на кнопку " + EMOJI_POINT_DOWN + ", чтобы послать свои контактные данные.";
+    public final static String CANCEL_SHARE_CONTACT_MSG_TEXT = "Посылка контактных данных отменена.";
     public final static String DOG_SHELTER_WELCOME_MSG_TEXT = "Вас приветствует приют для собак. Чем я могу Вам помочь? " + EMOJI_DOG;
     public final static String CONTACT_TELEGRAM_USERNAME_TEXT = "Пожалуйста свяжитесь с пользователем %s. Ему нужна помощь.";
     public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
@@ -54,6 +54,7 @@ public class Constants {
     public final static String BUTTON_CALL_VOLUNTEER_TEXT = "Позвать волонтера";
     public final static String BUTTON_MAIN_MENU_TEXT = "Главное меню";
     public final static String BUTTON_SHARE_CONTACT_TEXT = "Отправить контакт";
+    public final static String BUTTON_CANCEL_SHARE_CONTACT_TEXT = "Отменить";
     public final static String BUTTON_SHARE_CONTACT_DETAILS_TEXT = "Оставить свои контактные данные";
     public final static String BUTTON_REPORT_TEMPLATE_TEXT = "Форма ежедневного отчета";
     public final static String BUTTON_SEND_REPORT_TEXT = "Послать отчет";
