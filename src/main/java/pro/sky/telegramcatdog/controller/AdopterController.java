@@ -34,7 +34,7 @@ public class AdopterController {
             tags = "Работа с усыновителями"
     )
     @GetMapping("{id}")
-    public Adopter readAdopterById(@Parameter(description = "id усыновителя", example = "1") @PathVariable Integer id) {
+    public Adopter readAdopterById(@Parameter(description = "id усыновителя", example = "1") @PathVariable Long id) {
         return adopterService.readAdopter(id);
     }
 
