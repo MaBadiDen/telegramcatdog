@@ -472,7 +472,7 @@ class TelegramBotUpdatesListenerTest {
         messageText.append("Город: ").append(branchParams.getCity()).append("\n");
         messageText.append("Адрес: ").append(branchParams.getAddress()).append("\n");
         messageText.append("Часы работы: ").append(branchParams.getWorkHours()).append("\n");
-        when(branchParamsRepository.findById(1)).thenReturn(Optional.of(branchParams));
+        when(branchParamsRepository.findByPetType(PetType.DOG)).thenReturn(Optional.of(branchParams));
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
@@ -493,7 +493,7 @@ class TelegramBotUpdatesListenerTest {
         telegramBotUpdatesListener.setShelterType(PetType.DOG);
         BranchParams branchParams = new BranchParams();
         branchParams.setSecurityContact("test security contact");
-        when(branchParamsRepository.findById(1)).thenReturn(Optional.of(branchParams));
+        when(branchParamsRepository.findByPetType(PetType.DOG)).thenReturn(Optional.of(branchParams));
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
@@ -514,7 +514,7 @@ class TelegramBotUpdatesListenerTest {
         telegramBotUpdatesListener.setShelterType(PetType.DOG);
         BranchParams branchParams = new BranchParams();
         branchParams.setSecurityInfo("test security info");
-        when(branchParamsRepository.findById(1)).thenReturn(Optional.of(branchParams));
+        when(branchParamsRepository.findByPetType(PetType.DOG)).thenReturn(Optional.of(branchParams));
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("data_update.json").toURI()));
