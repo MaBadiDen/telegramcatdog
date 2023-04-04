@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static pro.sky.telegramcatdog.constants.Constants.*;
+import static pro.sky.telegramcatdog.constants.DocType.*;
 import static pro.sky.telegramcatdog.constants.PetType.CAT;
 import static pro.sky.telegramcatdog.constants.PetType.DOG;
 
@@ -49,6 +50,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public void setUpdateStatus(UpdateStatus updateStatus) {
         this.updateStatus = updateStatus;
     }
+
     public UpdateStatus getUpdateStatus() {
         return updateStatus;
     }
@@ -100,6 +102,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Creates buttons for the shelter type selection message (reply to the /start command)
+     *
      * @return {@code InlineKeyboardMarkup}
      */
     private InlineKeyboardMarkup createButtonsShelterTypeSelect() {
@@ -111,6 +114,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Creates buttons for the reply message to the shelter type selection (Stage 0)
+     *
      * @return {@code InlineKeyboardMarkup}
      */
     private InlineKeyboardMarkup createButtonsStage0() {
@@ -402,6 +406,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Processing request: General info about the shelter (stage 1)
+     *
      * @param chatId
      */
     private void processStage1Click(long chatId) {
@@ -427,6 +432,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     /**
      * Processing request: How to adopt a dog/cat (stage 2)
+     *
      * @param chatId
      */
     private void processStage2Click(long chatId, Update update) {
@@ -448,66 +454,97 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         if (shelterType == null) {
             return;
         }
-        String messageText = switch (shelterType) {
-            case DOG -> adoptionDocRepository.findById(1).orElse(null).getDescription();
-            case CAT -> adoptionDocRepository.findById(2).orElse(null).getDescription();
-        };
-        SendMessage message = new SendMessage(chatId, messageText);
-        // Adding buttons
-        sendMessage(message);
+        AdoptionDoc doc = null;
+        switch (shelterType) {
+            case DOG:
+                doc = adoptionDocRepository.findById(INFO_MEETING_DOG).orElse(null);
+                break;
+            case CAT:
+                doc = adoptionDocRepository.findById(INFO_MEETING_CAT).orElse(null);
+                break;
+        }
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processListOfDocsClick(long chatId) {
-        String messageText = adoptionDocRepository.findById(3).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(LIST_OF_DOCS).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processTransportAnimal(long chatId) {
-        String messageText = adoptionDocRepository.findById(4).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(TRANSPORT_ANIMAL).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processRecForLittle(long chatId) {
-        String messageText = adoptionDocRepository.findById(5).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(REC_FOR_LITTLE).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processRecForAdult(long chatId) {
-        String messageText = adoptionDocRepository.findById(6).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(REC_FOR_ADULT).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processRecForDisable(long chatId) {
-        String messageText = adoptionDocRepository.findById(7).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(REC_FOR_DISABLE).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processKinologAdvices(long chatId) {
-        String messageText = adoptionDocRepository.findById(8).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(KINOLOG_ADVICES).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processRecKinologs(long chatId) {
-        String messageText = adoptionDocRepository.findById(9).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(REC_KINOLOGS).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     private void processReasonsRefusal(long chatId) {
-        String messageText = adoptionDocRepository.findById(10).orElse(null).getDescription();
-        SendMessage message = new SendMessage(chatId, messageText);
-        sendMessage(message);
+        AdoptionDoc doc = adoptionDocRepository.findById(REASONS_REFUSAL).orElse(null);
+        if (doc != null) {
+            String messageText = doc.getDescription();
+            SendMessage message = new SendMessage(chatId, messageText);
+            sendMessage(message);
+        }
     }
 
     /**
      * Processing request: Send a follow-up report (stage 3)
+     *
      * @param chatId
      */
     private void processStage3Click(long chatId) {
