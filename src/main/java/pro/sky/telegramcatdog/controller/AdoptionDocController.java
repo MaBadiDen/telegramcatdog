@@ -8,11 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import pro.sky.telegramcatdog.constants.DocType;
 import pro.sky.telegramcatdog.model.AdoptionDoc;
 import pro.sky.telegramcatdog.service.AdoptionDocService;
 
 @RestController
-@RequestMapping("pet-shelter/docs")
+@RequestMapping("pet-shelter/doc")
 public class AdoptionDocController {
     private final AdoptionDocService adoptionDocService;
 
@@ -36,7 +37,7 @@ public class AdoptionDocController {
             tags = "Работа с документами"
     )
     @GetMapping("{id}")
-    public AdoptionDoc readAdoptionDocById(@Parameter(description = "id документа", example = "42") @PathVariable Long id) {
+    public AdoptionDoc readAdoptionDocById(@Parameter(description = "id документа") @PathVariable DocType id) {
         return adoptionDocService.readAdoptionDoc(id);
     }
 

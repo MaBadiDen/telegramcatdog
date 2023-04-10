@@ -2,8 +2,8 @@ package pro.sky.telegramcatdog.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 import java.util.Objects;
 
 @Entity
@@ -16,7 +16,7 @@ public class AdoptionReport {
     @ManyToOne
     @JoinColumn(name = "adopter_id")
     private Adopter adopterId;
-    private Timestamp reportDate;
+    private LocalDate reportDate;
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet petId;
@@ -29,9 +29,17 @@ public class AdoptionReport {
     public AdoptionReport() {
     }
 
+    public AdoptionReport(Adopter adopterId, LocalDate reportDate, byte[] picture, String diet, String wellBeing, String behaviorChange) {
+        this.adopterId = adopterId;
+        this.reportDate = reportDate;
+        this.picture = picture;
+        this.diet = diet;
+        this.wellBeing = wellBeing;
+        this.behaviorChange = behaviorChange;
+    }
+
     public AdoptionReport(Long id, byte[] picture, String diet, String wellBeing, String behaviorChange) {
         this.id = id;
-
         this.picture = picture;
         this.diet = diet;
         this.wellBeing = wellBeing;
@@ -43,12 +51,12 @@ public class AdoptionReport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdoptionReport that = (AdoptionReport) o;
-        return Objects.equals(adopterId, that.adopterId);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adopterId);
+        return Objects.hash(id);
     }
 
     public Long getId() {
@@ -67,11 +75,11 @@ public class AdoptionReport {
         this.adopterId = adopterId;
     }
 
-    public Timestamp getReportDate() {
+    public LocalDate getReportDate() {
         return reportDate;
     }
 
-    public void setReportDate(Timestamp reportDate) {
+    public void setReportDate(LocalDate reportDate) {
         this.reportDate = reportDate;
     }
 

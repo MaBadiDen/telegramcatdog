@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
+import pro.sky.telegramcatdog.exception.VolunteerNotFoundException;
 import pro.sky.telegramcatdog.model.Volunteer;
 import pro.sky.telegramcatdog.repository.VolunteerRepository;
 
@@ -36,5 +37,9 @@ public class VolunteerService {
         return volunteerRepository.save(oldVolunteer);
     }
 
-
+    public Volunteer getRandomVolunteer() {
+        return volunteerRepository
+                .getRandomVolunteer()
+                .orElseThrow(() -> new VolunteerNotFoundException("At least one volunteer must be present!"));
+    }
 }

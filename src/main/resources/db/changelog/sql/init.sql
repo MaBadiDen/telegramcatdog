@@ -112,4 +112,30 @@ CREATE TABLE IF NOT EXISTS adoption_docs
     id           SERIAL PRIMARY KEY,
     short_desc   VARCHAR,
     description  VARCHAR
-)
+);
+
+-- changeset alexeym75:8
+DROP SEQUENCE IF EXISTS adoption_reports_adopter_id_seq CASCADE;
+ALTER TABLE adoption_reports ALTER COLUMN adopter_id SET DATA TYPE BIGINT;
+
+-- changeset alexeym75:9
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_info TEXT;
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS security_contact VARCHAR;
+ALTER TABLE branch_params ADD COLUMN IF NOT EXISTS pet_type INT;
+
+-- changeset alexeym75:10
+ALTER TABLE adopters DROP COLUMN IF EXISTS telegram;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS chat_id BIGINT;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS username VARCHAR;
+
+--changeset itamerlan:11
+ALTER TABLE adoption_reports
+ALTER COLUMN report_date TYPE DATE;
+
+-- changeset alexeym75:11
+ALTER TABLE adoption_docs DROP COLUMN IF EXISTS short_desc;
+ALTER TABLE adoption_docs ALTER COLUMN id SET DATA TYPE INT;
+DROP SEQUENCE IF EXISTS adoption_docs_id_seq CASCADE;
+
+-- changeset alexeym75:12
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS update_status INT;

@@ -12,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import pro.sky.telegramcatdog.model.AdoptionReport;
-import pro.sky.telegramcatdog.model.Volunteer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static pro.sky.telegramcatdog.constants.Constants.*;
+import static pro.sky.telegramcatdog.constants.Constants.ADOPTION_REPORT_URL;
+import static pro.sky.telegramcatdog.constants.Constants.LOCALHOST_URL;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -34,7 +34,7 @@ public class AdoptionReportControllerTest {
 
     @Test
     void createAdoptionReportTest() {
-        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", "1");
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", null);
         ResponseEntity<AdoptionReport> response = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, response);
     }
@@ -82,7 +82,7 @@ public class AdoptionReportControllerTest {
     @Test
     void findAdoptionReportTest() {
         // Create new AdoptionReport and check that it was created OK
-        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", "1");
+        AdoptionReport adoptionReport = new AdoptionReport(1l, null, "1", "1", null);
         ResponseEntity<AdoptionReport> responseCreated = getCreateAdoptionReportResponse(adoptionReport);
         assertCreatedAdoptionReport(adoptionReport, responseCreated);
 
