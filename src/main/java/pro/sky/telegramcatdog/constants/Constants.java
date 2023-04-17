@@ -22,6 +22,7 @@ public class Constants {
     public final static String DOG_SHELTER_STAGE3_WELCOME_MSG_TEXT = "Собачий приют " + EMOJI_DOG + " Этап 3: Прислать отчет о питомце.";
     public final static String SHARE_CONTACT_MSG_TEXT = "Нажмите на кнопку " + EMOJI_POINT_DOWN + ", чтобы послать свои контактные данные.";
     public final static String CANCEL_SHARE_CONTACT_MSG_TEXT = "Посылка контактных данных отменена.";
+    public final static String CANCEL_SEND_REPORT_MSG_TEXT = "Посылка отчета отменена.";
     public final static String DOG_SHELTER_WELCOME_MSG_TEXT = "Вас приветствует приют для собак. Чем я могу Вам помочь? " + EMOJI_DOG;
     public final static String CONTACT_TELEGRAM_USERNAME_TEXT = "Пожалуйста свяжитесь с пользователем %s. Ему нужна помощь.";
     public final static String CONTACT_TELEGRAM_ID_TEXT = "Пожалуйста свяжитесь с пользователем id %s. Ему нужна помощь.";
@@ -54,7 +55,7 @@ public class Constants {
     public final static String BUTTON_CALL_VOLUNTEER_TEXT = "Позвать волонтера";
     public final static String BUTTON_MAIN_MENU_TEXT = "Главное меню";
     public final static String BUTTON_SHARE_CONTACT_TEXT = "Отправить контакт";
-    public final static String BUTTON_CANCEL_SHARE_CONTACT_TEXT = "Отменить";
+    public final static String BUTTON_CANCEL_TEXT = "Отменить";
     public final static String BUTTON_SHARE_CONTACT_DETAILS_TEXT = "Оставить свои контактные данные";
     public final static String BUTTON_REPORT_TEMPLATE_TEXT = "Форма ежедневного отчета";
     public final static String BUTTON_SEND_REPORT_TEXT = "Послать отчет";
@@ -70,7 +71,6 @@ public class Constants {
     public final static String BUTTON_ADVICES_FROM_KINOLOG_TEXT = "Советы кинолога по общению с собакой";
     public final static String BUTTON_RECOMMENDED_KINOLOGS_TEXT = "Рекомендации по проверенным кинологам";
     public final static String BUTTON_REASONS_FOR_REFUSAL_TEXT = "Причины отказа в усыновлении";
-
 
     // Buttons callback text
     public final static String BUTTON_CAT_SHELTER_CALLBACK_TEXT = "button_Cat_Shelter_clicked";
@@ -93,12 +93,10 @@ public class Constants {
     public final static String BUTTON_REASONS_FOR_REFUSAL_CALLBACK_TEXT = "button_reasonsRefusal_clicked";
     public final static String BUTTON_INFO_SHELTER_CALLBACK_TEXT = "button_Info_Shelter_clicked";
     public final static String BUTTON_INFO_SECURITY_CALLBACK_TEXT = "button_Info_Security_clicked";
-    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT ="button_Info_Safety_Precautions_clicked";
+    public final static String BUTTON_INFO_SAFETY_PRECAUTIONS_CALLBACK_TEXT = "button_Info_Safety_Precautions_clicked";
+    public final static String BUTTON_CANCEL_SEND_REPORT_CALLBACK_TEXT = "button_Cancel_Send_Report_clicked";
 
-
-
-
-    // REST endpoint testing urls
+    // REST endpoint urls
     public final static String LOCALHOST_URL = "http://localhost:";
     public final static String BRANCHPARAMS_URL = "/pet-shelter/params";
     public final static String PET_URL = "/pet-shelter/pet";
