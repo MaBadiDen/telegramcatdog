@@ -18,7 +18,6 @@ public class Pet {
     private PetType petType;
     private Color color;
     private Sex sex;
-    // to do: setup @ManyToOne linkage to Breed class when it is done
     @ManyToOne
     @JoinColumn(name = "breed_id")
     private Breed breedId;

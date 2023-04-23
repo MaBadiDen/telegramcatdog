@@ -13,7 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import pro.sky.telegramcatdog.model.Adopter;
 
-import static pro.sky.telegramcatdog.constants.Constants.*;
+import static pro.sky.telegramcatdog.constants.Constants.ADOPTER_URL;
+import static pro.sky.telegramcatdog.constants.Constants.LOCALHOST_URL;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -30,7 +31,7 @@ class AdopterControllerTest {
 
     @Test
     public void createAdopterTest() {
-        Adopter adopter = new Adopter(1, "test", "test", "123", 123, "test");
+        Adopter adopter = new Adopter(1, "test", "test", "123", 123, "test", 30);
         ResponseEntity<Adopter> response = getCreateAdopterResponse(adopter);
         assertCreatedAdopter(adopter, response);
     }
@@ -41,7 +42,7 @@ class AdopterControllerTest {
         String newFirstName = "Dionis";
 
         // Create new adopter first and check that it was created OK
-        Adopter adopter = new Adopter(1, oldFirstName, "test", "123", 123, "test");
+        Adopter adopter = new Adopter(1, oldFirstName, "test", "123", 123, "test", 30);
         ResponseEntity<Adopter> responseCreated = getCreateAdopterResponse(adopter);
         assertCreatedAdopter(adopter, responseCreated);
 
@@ -68,7 +69,7 @@ class AdopterControllerTest {
     @Test
     public void readAdopterTest() {
         // Create new adopter and check that it was created OK
-        Adopter adopter = new Adopter(1, "test", "test", "123", 123, "test");
+        Adopter adopter = new Adopter(1, "test", "test", "123", 123, "test", 30);
         ResponseEntity<Adopter> responseCreated = getCreateAdopterResponse(adopter);
         assertCreatedAdopter(adopter, responseCreated);
 
