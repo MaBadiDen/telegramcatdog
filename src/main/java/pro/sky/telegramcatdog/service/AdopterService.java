@@ -99,8 +99,7 @@ public class AdopterService {
      * @see org.springframework.scheduling.annotation.Scheduled
      * @see Scheduled#cron()
      */
-    //@Scheduled(cron = "0 0/1 * * * *") // runs every minute at 00 sec
-    //@Scheduled(cron = "0 0 21 * * *") // runs every day at midnight
+    @Scheduled(cron = "0 0 21 * * *") // runs every day at 21:00
     public void checkAdopterReports() {
         processAdoptersOnProbation();
         processAdoptersOnProbationExt();
