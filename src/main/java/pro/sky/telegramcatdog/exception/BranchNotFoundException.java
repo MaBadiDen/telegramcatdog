@@ -3,6 +3,9 @@ package pro.sky.telegramcatdog.exception;
 public class BranchNotFoundException extends RuntimeException{
     private int id;
 
+    public BranchNotFoundException() {
+    }
+
     public BranchNotFoundException(int id) {
         this.id = id;
     }

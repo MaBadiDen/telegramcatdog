@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import pro.sky.telegramcatdog.constants.PetType;
 import pro.sky.telegramcatdog.constants.UpdateStatus;
+import pro.sky.telegramcatdog.exception.GuestNotFoundException;
 import pro.sky.telegramcatdog.model.*;
 import pro.sky.telegramcatdog.repository.*;
 import pro.sky.telegramcatdog.service.AdopterService;
@@ -391,7 +392,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             sendShelterTypeSelectMessage(chatId);
         } else {
             shelterType = guest.getLastMenu();
-            switch (guest.getLastMenu()) {
+            if (shelterType == null) {
+                sendShelterTypeSelectMessage(chatId);
+                return;
+            }
+            switch (shelterType) {
                 case DOG:
                     sendStage0Message(chatId, DOG_SHELTER_WELCOME_MSG_TEXT);
                     break;
@@ -642,10 +647,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         Guest guest = guestRepository.findByChatId(chatId);
         if (guest == null) {
             guest = new Guest(chatId, new Timestamp(System.currentTimeMillis()), lastMenu);
-            guestRepository.save(guest);
+        } else {
+            guest.setLastMenu(lastMenu);
         }
+        guestRepository.save(guest);
     }
 
+    /**
+     * Save new adopter into {@code [adopters]} table.
+     * Default probation period for adopter equals the selected shelter probation period,
+     * i.e. by default {@code [adopters].[prob_extend] = [branch_params].[prob_period]}.
+     * The {@code [adopters].[prob_extend]} can be increased later by volunteer if needed.
+     * @param update
+     */
     private void saveAdopter(Update update) {
         if (update.message().contact() != null) {
             String firstName = update.message().contact().firstName();
@@ -656,7 +670,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
             Adopter adopter = adopterRepository.findByChatId(chatId);
             if (adopter == null) {
-                adopter = new Adopter(firstName, lastName, phone1, chatId, username);
+                Guest guest = guestRepository.findByChatId(chatId);
+                if (guest == null) {
+                    throw new GuestNotFoundException(chatId);
+                }
+                BranchParams branchParams = branchParamsRepository.findByPetType(guest.getLastMenu()).orElse(null);
+                adopter = new Adopter(firstName, lastName, phone1, chatId, username, branchParams.getProbPeriod());
                 adopter.setUpdateStatus(UpdateStatus.DEFAULT);
                 adopterRepository.save(adopter);
                 SendMessage message = new SendMessage(chatId, SAVE_ADOPTER_SUCCESS_TEXT + ' ' + WE_WILL_CALL_YOU_TEXT);
