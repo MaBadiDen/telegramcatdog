@@ -220,7 +220,7 @@ class TelegramBotUpdatesListenerTest {
     @Test
     public void handleShareContactWhenItAlreadyExists() throws URISyntaxException, IOException {
         Long chatId = 1122334455L;
-        Adopter adopter = new Adopter(1, "Vasya", "Pupkin", "+79101234567", 1122334455, "@vasya_pupkin");
+        Adopter adopter = new Adopter(1, "Vasya", "Pupkin", "+79101234567", 1122334455, "@vasya_pupkin", 30);
 
         when(adopterRepository.findByChatId(any(Long.class))).thenReturn(adopter);
 
@@ -241,6 +241,12 @@ class TelegramBotUpdatesListenerTest {
     @Test
     public void handleShareContactWhenItDoNotExist() throws URISyntaxException, IOException {
         Long chatId = 1122334455L;
+        Guest guest = new Guest(chatId, null, PetType.DOG);
+        BranchParams branchParams = new BranchParams();
+        branchParams.setProbPeriod(30);
+
+        when(guestRepository.findByChatId(any(Long.class))).thenReturn(guest);
+        when(branchParamsRepository.findByPetType(any(PetType.class))).thenReturn(Optional.of(branchParams));
 
         String json = Files.readString(
                 Paths.get(TelegramBotUpdatesListenerTest.class.getResource("contact_update.json").toURI()));
@@ -580,7 +586,8 @@ class TelegramBotUpdatesListenerTest {
                 "Pupkin",
                 "+79101234567",
                 1122334455,
-                "@vasya_pupkin");
+                "@vasya_pupkin",
+                30);
 
         AdoptionReport adoptionReport = new AdoptionReport(adopter,
                 today,
@@ -617,7 +624,8 @@ class TelegramBotUpdatesListenerTest {
                 "Pupkin",
                 "+79101234567",
                 1122334455,
-                "@vasya_pupkin");
+                "@vasya_pupkin",
+                30);
 
         AdoptionReport adoptionReport = new AdoptionReport(adopter,
                 today,
@@ -654,7 +662,8 @@ class TelegramBotUpdatesListenerTest {
                 "Pupkin",
                 "+79101234567",
                 1122334455,
-                "@vasya_pupkin");
+                "@vasya_pupkin",
+                30);
 
         AdoptionReport adoptionReport = new AdoptionReport(adopter,
                 today,

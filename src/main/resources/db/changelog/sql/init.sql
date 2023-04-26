@@ -139,3 +139,7 @@ DROP SEQUENCE IF EXISTS adoption_docs_id_seq CASCADE;
 
 -- changeset alexeym75:12
 ALTER TABLE adopters ADD COLUMN IF NOT EXISTS update_status INT;
+
+-- changeset alexeym75:13
+ALTER TABLE branch_params DROP COLUMN IF EXISTS prob_extend;
+ALTER TABLE adopters ADD COLUMN IF NOT EXISTS prob_extend INT;

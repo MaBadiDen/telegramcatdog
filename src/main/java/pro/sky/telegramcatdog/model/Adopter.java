@@ -30,24 +30,29 @@ public class Adopter {
     @Column(name = "update_status")
     private UpdateStatus updateStatus;
 
+    @Column(name = "prob_extend")
+    private Integer probExtend;
+
     @OneToMany(mappedBy = "adopterId")
     private Collection<Pet> pets;
 
-    public Adopter(long id, String firstName, String lastName, String phone1, long chatId, String username) {
+    public Adopter(long id, String firstName, String lastName, String phone1, long chatId, String username, int probExtend) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone1 = phone1;
         this.chatId = chatId;
         this.username = username;
+        this.probExtend = probExtend;
     }
 
-    public Adopter(String firstName, String lastName, String phone1, long chatId, String username) {
+    public Adopter(String firstName, String lastName, String phone1, long chatId, String username, int probExtend) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone1 = phone1;
         this.chatId = chatId;
         this.username = username;
+        this.probExtend = probExtend;
     }
 
     public Adopter() {
@@ -153,5 +158,13 @@ public class Adopter {
 
     public void setUpdateStatus(UpdateStatus updateStatus) {
         this.updateStatus = updateStatus;
+    }
+
+    public int getProbExtend() {
+        return probExtend;
+    }
+
+    public void setProbExtend(Integer probExtend) {
+        this.probExtend = probExtend;
     }
 }

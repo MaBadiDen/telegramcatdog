@@ -18,8 +18,8 @@ public class BranchParams {
     private String workHours;
     private byte[] map;
     private String info;
+    @Column(name = "prob_period")
     private int probPeriod;
-    private int probExtend;
 
     @Column(name = "security_info")
     private String securityInfo;
@@ -78,8 +78,8 @@ public class BranchParams {
         return probPeriod;
     }
 
-    public int getProbExtend() {
-        return probExtend;
+    public void setProbPeriod(int probPeriod) {
+        this.probPeriod = probPeriod;
     }
 
     public void setName(String name) {
